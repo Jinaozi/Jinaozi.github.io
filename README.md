@@ -100,8 +100,7 @@
                 </p>
                 <p> 
                     Over two centuries have passed since the invention of the first mechanical calculators in the 19th century. Early 20th-century computer designs were nearly indistinguishable due to their increased size and capability. Ada Lovelace created the first computer program in history in 1848, and Herman Hollerith created a punch-card system for the United States in 1890. Vannevar Bush created the Differential Analyzer, while John Vincent Atanasoff created the first electric-only computer without the need for gears, cams, belts, or shafts. Alan Turing introduced the idea of a universal machine in his work "On Computable Numbers."
-                </p>  
-            </article> 
+                </p> 
             <article> 
                 <h2>Milestones</h2>        
                 <center><img src="https://image.cnbcfm.com/api/v1/image/105091300-GettyImages-881634740.jpg?v=1532563663&w=1260&h=709&ffmt=webp&vtcrop=y" 
@@ -121,7 +120,7 @@
                 </p>
                 <p>
                 The mass adoption of broadband internet across the developed world has led to high-speed downloads, super-fast browsing, and high-resolution streaming. In the U.K., there were 25.3 million fixed broadband connections at the end of 2016. Connected living in the 2000s saw homes rapidly transform into spaces where traditional computers dovetail alongside newer technology, such as smartphones, smart TVs, virtual assistants, and tablets. With the click of a button, a song being played on a computer in someone's bedroom can be displayed on a 72-inch TV in their living room via a high-speed, wireless connection. This merging of physical and virtual worlds is known as the internet of things.
-                </p> </article> 
+                </p>
             <article> 
                 <h2>Pioneers</h2> 
                 <p class="post-meta"> 
@@ -146,8 +145,7 @@
            </style>   
             <div class="image-text-container">
             <img src="https://assets.sutori.com/user-uploads/image/925789bc-56d4-45f4-89ab-1db0d1cb88e5/8b6901fa1a4c95705aab74e4f95ffde6.jpeg" />
-            <p
-            style="text-align: left;"> 
+            <p style="text-align: left;"> 
             Alan Turing, a significant mathematician during World War II, played a crucial role in breaking the German Enigma code at Blatchley Park. He designed a computer called the Bombe to decipher the German messages, reducing the war's duration and saving millions of lives. Turing's team had to avoid discovering that Enigma had been decrypted, using an electromechanical device to calculate the key of the day the Germans were using on their Enigma machine. The Bombe operators could set up the machine and calculate possible Enigma settings using a menu provided by the codebreaking team. After the war, Turing developed the Turing Test, a method to test artificial intelligence. Persecuted for homosexual acts, he committed suicide in 1954. 
            </p>   
             </div>
@@ -465,5 +463,3 @@
                 <p>
                     ‌Williamson, T. (2021, December 1). History of computers: A brief timeline. Live Science. https://www.livescience.com/20718-computer-history.html
                 </p> </article>         
-        </main> 
-        </div> 
