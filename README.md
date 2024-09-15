@@ -133,15 +133,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px; 
-        }
+            margin-bottom: 20px; }
         .image-text-container img {
             width: 200px; 
-            height: auto;
-        }
+            height: auto; }
         .image-text-container p {
-            margin: 0;
-        }
+            margin: 0;}
            </style>   
             <div class="image-text-container">
             <img src="https://assets.sutori.com/user-uploads/image/925789bc-56d4-45f4-89ab-1db0d1cb88e5/8b6901fa1a4c95705aab74e4f95ffde6.jpeg" />
