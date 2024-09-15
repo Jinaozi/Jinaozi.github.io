@@ -47,12 +47,17 @@
             border: 1px solid rgb(145, 145, 145); 
             margin-right: 10px; 
         } 
-        aside { 
-            flex: 1; 
-            background-color: #8C7162; 
-            color: #FFFFFF; 
-            padding: 10px; 
-        } 
+        type"text/css">
+        .image-text-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px; }
+        .image-text-container img {
+            width: 200px; 
+            height: auto; }
+        .image-text-container p {
+            margin: 0;} 
         footer { 
             background-color: #8A624D; 
             color: #fff; 
@@ -128,18 +133,6 @@
                 <p> 
                     The outstanding accomplishments of many well-known computer scientists have influenced the field of computer science. These outstanding people have made revolutionary contributions to the advancement of computer programming, artificial intelligence, programming languages, and the internet as we know it today. They were forerunners in their domains, laying the groundwork for the contemporary computer era and motivating a great number of people to pursue similar careers. Now, let's explore the lives and achievements of 25 of the most significant computer scientists (as well as scientific teams) that have had a lasting impact on the field. These remarkable men and women changed the way we engage with technology and, in the process, transformed our lives. They invented the first programming language and created the World Wide Web.
                 </p>
-           <style type"text/css">
-                .image-text-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px; }
-        .image-text-container img {
-            width: 200px; 
-            height: auto; }
-        .image-text-container p {
-            margin: 0;}
-           </style>   
             <div class="image-text-container">
             <img src="https://assets.sutori.com/user-uploads/image/925789bc-56d4-45f4-89ab-1db0d1cb88e5/8b6901fa1a4c95705aab74e4f95ffde6.jpeg" />
             <p style="text-align: left;"> 
