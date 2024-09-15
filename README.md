@@ -1,4 +1,3 @@
-<!DOCTYPE html> 
 <html lang="en"> 
 
 <head> 
@@ -467,18 +466,4 @@
                     ‌Williamson, T. (2021, December 1). History of computers: A brief timeline. Live Science. https://www.livescience.com/20718-computer-history.html
                 </p> </article>         
         </main> 
-                    <aside> 
-            <h2>Recent Posts</h2> 
-            <ul> 
-                <li><a href="#">Home</a></li> 
-                <li><a href="#">History</a></li> 
-                <li><a href="#">Milestones</a></li> 
-                <li><a href="#">Pioneers</a></li> 
-                <li><a href="#">Revolution</a></li>
-                <li><a href="#">IT Synopsis</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">References</a></li>
-            </ul> 
-        </aside> 
-    </div> 
         </div> 
