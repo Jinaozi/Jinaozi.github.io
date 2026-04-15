@@ -1,484 +1,835 @@
-<!DOCTYPE html> 
-<html lang="en"> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduManage LMS — Teacher Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --maroon:#6B1A2A;--maroon-dark:#4A0F1C;--maroon-light:#8B2A3F;--maroon-pale:#F5E8EB;
+  --gold:#C9A227;--gold-light:#E8C04A;--gold-pale:#FDF6E3;--gold-dark:#A07A10;
+  --white:#fff;--gray-50:#F8F7F5;--gray-100:#EDEDEA;--gray-200:#D4D3CE;--gray-400:#9A9890;--gray-600:#5C5A54;--gray-800:#2C2C2A;
+  --sidebar-w:220px;--font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;
+}
+body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-800);overflow-x:hidden}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--maroon-dark);color:var(--white);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(201,162,39,0.3)}
+.sidebar-logo h1{font-family:var(--font-display);font-size:16px;color:var(--gold-light);line-height:1.3}
+.sidebar-logo p{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px}
+.sidebar-nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:13.5px;font-weight:500;color:rgba(255,255,255,0.75);transition:all 0.18s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(201,162,39,0.12);color:var(--white)}
+.nav-item.active{background:rgba(201,162,39,0.18);color:var(--gold-light);border-left-color:var(--gold)}
+.nav-item svg{width:16px;height:16px;opacity:0.8;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--maroon-dark);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.sidebar-bottom{padding:12px 0;border-top:1px solid rgba(255,255,255,0.1)}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--white);border-bottom:1px solid var(--gray-100);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--maroon)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--font-display)}
+.content{padding:28px;flex:1}
+.screen{display:none}.screen.active{display:block}
+.card{background:var(--white);border-radius:12px;border:1px solid var(--gray-100);padding:20px 24px;margin-bottom:16px}
+.card-title{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--maroon);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:14px 16px}
+.stat-label{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;font-weight:600}
+.stat-val{font-size:26px;font-weight:700;font-family:var(--font-display);color:var(--maroon)}
+.stat-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
+.subject-card{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-light) 100%);color:var(--white);border-radius:12px;padding:18px 20px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;position:relative;overflow:hidden}
+.subject-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(107,26,42,0.25)}
+.subject-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(201,162,39,0.2);border-radius:50%}
+.subject-card h3{font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:4px;position:relative;z-index:1}
+.subject-card p{font-size:12px;opacity:0.75;position:relative;z-index:1}
+.sc-code{font-size:11px;background:rgba(201,162,39,0.3);color:var(--gold-light);padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px;font-weight:600;position:relative;z-index:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.16s;font-family:var(--font-body)}
+.btn-primary{background:var(--maroon);color:var(--white)}.btn-primary:hover{background:var(--maroon-light)}
+.btn-gold{background:var(--gold);color:var(--maroon-dark)}.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--maroon);border:1.5px solid var(--maroon)}.btn-outline:hover{background:var(--maroon-pale)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-danger{background:#f5e8e8;color:#8B2020;border:none}.btn-danger:hover{background:#f0d0d0}
+input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:var(--font-body);font-size:13.5px;color:var(--gray-800);background:var(--white);transition:border 0.16s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--maroon)}
+label{font-size:12.5px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:5px}
+.form-group{margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--maroon-pale);color:var(--maroon);font-weight:700;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.6px}
+td{padding:9px 12px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+tr:hover td{background:var(--gray-50)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-present{background:#E8F5E2;color:#2E7D32}
+.badge-absent{background:#FFEBEE;color:#C62828}
+.badge-grade{background:var(--gold-pale);color:var(--gold-dark)}
+.tab-bar{display:flex;gap:4px;background:var(--gray-100);border-radius:10px;padding:4px;margin-bottom:20px}
+.tab{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-600);transition:all 0.16s}
+.tab.active{background:var(--white);color:var(--maroon);box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+.grade-table input[type=number]{width:60px;text-align:center;padding:4px;font-size:12px}
+.grade-cell-computed{background:#FFF8E1;color:var(--gold-dark);font-weight:700;text-align:center;font-size:13px}
+.grade-cell-fixed{background:var(--maroon-pale);color:var(--maroon);font-weight:700;font-size:12px;text-align:center}
+.search-box{position:relative;flex:1}
+.search-box input{padding-left:34px}
+.search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-400)}
+.student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.student-card-grid{background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.16s}
+.student-card-grid:hover{border-color:var(--maroon);box-shadow:0 4px 12px rgba(107,26,42,0.12)}
+.student-avatar{width:52px;height:52px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-family:var(--font-display);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-400);margin-bottom:18px}
+.breadcrumb span{cursor:pointer;color:var(--maroon);font-weight:500}.breadcrumb span:hover{text-decoration:underline}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--maroon)}
+.final-grade-banner{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-light) 100%);color:var(--white);border-radius:12px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.grade-num{font-size:42px;font-weight:800;font-family:var(--font-display);color:var(--gold-light)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:14px;padding:28px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--maroon);margin-bottom:18px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.schedule-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.schedule-day{width:70px;font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px}
+.profile-pic-circle{width:90px;height:90px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-family:var(--font-display);font-size:30px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid var(--gold);cursor:pointer}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;background:var(--maroon-pale);color:var(--maroon);border-radius:20px;font-size:12px;font-weight:600}
+.curriculum-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.ci-num{width:28px;height:28px;border-radius:50%;background:var(--maroon-pale);color:var(--maroon);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-title{flex:1;font-size:13.5px;font-weight:500}
+.login-screen{min-height:100vh;background:linear-gradient(135deg,var(--maroon-dark) 0%,var(--maroon) 60%,var(--maroon-light) 100%);display:flex;align-items:center;justify-content:center;padding:24px;position:fixed;inset:0;z-index:300}
+.login-card{background:var(--white);border-radius:16px;padding:36px;width:380px;max-width:95vw}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo h1{font-family:var(--font-display);font-size:22px;color:var(--maroon);font-weight:700}
+.login-logo p{font-size:13px;color:var(--gray-400);margin-top:4px}
+.login-tabs{display:flex;gap:4px;background:var(--gray-100);border-radius:10px;padding:4px;margin-bottom:20px}
+.login-tab{flex:1;padding:8px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-600);text-align:center;transition:all 0.16s}
+.login-tab.active{background:var(--white);color:var(--maroon)}
+.gold-divider{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));border-radius:2px;margin:0 0 20px}
+.notice-box{background:var(--gray-50);border:1px dashed var(--gray-200);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--gray-600);text-align:center;margin-top:10px}
+.toggle-view{display:flex;gap:4px}
+.view-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:7px;cursor:pointer;border:1.5px solid var(--gray-200);color:var(--gray-400);background:var(--white);transition:all 0.15s}
+.view-btn.active{border-color:var(--maroon);color:var(--maroon);background:var(--maroon-pale)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100)}
+.toggle-switch{width:42px;height:24px;border-radius:12px;background:var(--gray-200);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle-switch.on{background:var(--maroon)}
+.toggle-switch::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:white;top:3px;left:3px;transition:left 0.2s}
+.toggle-switch.on::after{left:21px}
+</style>
+</head>
+<body>
 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content= 
-        "width=device-width, initial-scale=1.0"> 
-    <style> 
-        body { 
-            font-family: Mosnospace, Georgia;
-            background-color: #EFE4CD;
-            margin: 0; 
-            padding: 0; 
-        } 
-        header { 
-            background-color: #EFE4CD; 
-            color: #000000; 
-            text-align: center; 
-        } 
-        nav { 
-            background-color: #8C7162; 
-            padding: 10px; 
-        } 
-        nav a { 
-            color: #FFFFFF; 
-            text-decoration: none; 
-            padding: 10px; 
-            margin-right: 10px; 
-            display: inline-block; 
-        } 
-        .container { 
-            display: flex; 
-            justify-content: space-between; 
-            max-width: 95%; 
-            margin: 0 auto; 
-            padding: 20px; 
-        } 
-        article p { 
-            text-align: justify; 
-        } 
-        main { 
-            flex: 2; 
-        } 
-        article {
-            background-color: #F2EDDF; 
-            margin-bottom: 20px; 
-            padding: 10px 20px; 
-            border: 1px solid rgb(145, 145, 145); 
-            margin-right: 10px; 
-        } 
-        aside { 
-            flex: 1; 
-            background-color: #8C7162; 
-            color: #FFFFFF; 
-            padding: 10px; 
-        } 
-        footer { 
-            background-color: #8A624D; 
-            color: #fff; 
-            text-align: center; 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-        } 
-        p {
-            text-indent: 50px
-        }
-    </style> 
-    <title>Bits and Bytes blog</title> 
-</head> 
-<body> 
-    <header> 
-        <h1>Bits to Bytes</h1> 
-        <p>Understanding IT Basics in Historical Context</p> 
-    </header> 
-    <nav> 
-        <a href="#">Home</a> 
-        <a href="#">History</a> 
-        <a href="#">Milestones</a> 
-        <a href="#">Pioneers</a> 
-        <a href="#">Revolution</a> 
-        <a href="#">IT Synopsis</a> 
-        <a href="#">Services</a>
-        <a href="#">References</a>
-    </nav> 
-    <div class="container"> 
-        <main> 
-            <article> 
-                <h2>History</h2>                
-                <center><img src="https://media.cnn.com/api/v1/images/stellar/prod/200501174855-home-computers-tease-1.jpg?q=w_4818,h_2710,x_0,y_0,c_fill" 
-                alt="Computer"
-                width="600"
-                height="430"/>                
-                <figcaption> 
-                Photo by John Short
-                </figcaption>                
-                <p class="post-meta">  
-                </p> 
-               <p> 
-                    The concept of a computer dates back to ancient monuments like Stonehenge and the IBM Q System One, designed to relieve the human mind from repetitive mental calculations. Advancements in computer technology were not just machines but also innovations in human abstract reasoning. Recording figures in wet clay allowed for more advanced operations and the realization that mathematical computations could work together to accomplish more complicated computational tasks.
-                </p>
-                <p> 
-                    Over two centuries have passed since the invention of the first mechanical calculators in the 19th century. Early 20th-century computer designs were nearly indistinguishable due to their increased size and capability. Ada Lovelace created the first computer program in history in 1848, and Herman Hollerith created a punch-card system for the United States in 1890. Vannevar Bush created the Differential Analyzer, while John Vincent Atanasoff created the first electric-only computer without the need for gears, cams, belts, or shafts. Alan Turing introduced the idea of a universal machine in his work "On Computable Numbers."
-                </p>  
-            </article> 
-            <article> 
-                <h2>Milestones</h2>        
-                <center><img src="https://image.cnbcfm.com/api/v1/image/105091300-GettyImages-881634740.jpg?v=1532563663&w=1260&h=709&ffmt=webp&vtcrop=y" 
-                alt="Milestone"
-                width="600"
-                height="430"/>              
-                <figcaption> 
-                Photo by Wenjie Dong, Getty Images
-                </figcaption>
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                   Computers have become an indispensable tool in modern life, used in homes, hospitals, schools, and offices. Eight developments that have shaped the world we live in today include the ENIAC, IBM's personal computer, Apple's Macintosh, Windows 1.0, the World Wide Web, Sega Saturn and Sony PlayStation, broadband internet, and connected living. ENIAC was developed by John Presper Eckert and John W. Mauchly in 1946 and is considered the first general-purpose electronic computer. IBM's personal computer, the IBM 5150, was launched in 1981 and became popular due to its memory and arithmetic capabilities. The IBM 5150 had 40K of read-only memory and 16K of user memory, a built-in speaker, self-diagnostic checks, and Microsoft's MS-DOS 1.0 operating system.
-                </p> 
-                <p>
-                In 1984, Steve Jobs launched the first Macintosh, targeting 25 million knowledge workers in medium and small-sized businesses and over 11 million college students in America alone. Windows 1.0 was launched in 1985 as an operating system with a graphical interface, and the latest versions are used by millions worldwide. The World Wide Web was introduced in 1989 by British computer scientist Tim Berners-Lee at CERN, where the world's first website and server went live a year later. The Sega Saturn and Sony PlayStation consoles, launched in 1994, blazed a trail in the video gaming industry, with games on CDs rather than cartridges.
-                </p>
-                <p>
-                The mass adoption of broadband internet across the developed world has led to high-speed downloads, super-fast browsing, and high-resolution streaming. In the U.K., there were 25.3 million fixed broadband connections at the end of 2016. Connected living in the 2000s saw homes rapidly transform into spaces where traditional computers dovetail alongside newer technology, such as smartphones, smart TVs, virtual assistants, and tablets. With the click of a button, a song being played on a computer in someone's bedroom can be displayed on a 72-inch TV in their living room via a high-speed, wireless connection. This merging of physical and virtual worlds is known as the internet of things.
-                </p> </article> 
-            <article> 
-                <h2>Pioneers</h2> 
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                    The outstanding accomplishments of many well-known computer scientists have influenced the field of computer science. These outstanding people have made revolutionary contributions to the advancement of computer programming, artificial intelligence, programming languages, and the internet as we know it today. They were forerunners in their domains, laying the groundwork for the contemporary computer era and motivating a great number of people to pursue similar careers. Now, let's explore the lives and achievements of 25 of the most significant computer scientists (as well as scientific teams) that have had a lasting impact on the field. These remarkable men and women changed the way we engage with technology and, in the process, transformed our lives. They invented the first programming language and created the World Wide Web.
-                </p>
-           <style type"text/css">
-                .image-text-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px; 
-        }
-        .image-text-container img {
-            width: 200px; 
-            height: auto;
-        }
-        .image-text-container p {
-            margin: 0;
-        }
-           </style>   
-            <div class="image-text-container">
-            <img src="https://assets.sutori.com/user-uploads/image/925789bc-56d4-45f4-89ab-1db0d1cb88e5/8b6901fa1a4c95705aab74e4f95ffde6.jpeg" />
-            <p
-            style="text-align: left;"> 
-            Alan Turing, a significant mathematician during World War II, played a crucial role in breaking the German Enigma code at Blatchley Park. He designed a computer called the Bombe to decipher the German messages, reducing the war's duration and saving millions of lives. Turing's team had to avoid discovering that Enigma had been decrypted, using an electromechanical device to calculate the key of the day the Germans were using on their Enigma machine. The Bombe operators could set up the machine and calculate possible Enigma settings using a menu provided by the codebreaking team. After the war, Turing developed the Turing Test, a method to test artificial intelligence. Persecuted for homosexual acts, he committed suicide in 1954. 
-           </p>   
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div style="font-size:36px;margin-bottom:8px">🎓</div>
+      <h1>EduManage LMS</h1>
+      <p>Teacher's Learning Management System</p>
+    </div>
+    <div class="gold-divider"></div>
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('login')">Sign In</div>
+      <div class="login-tab" onclick="switchLoginTab('register')">Register</div>
+    </div>
+    <div id="loginForm">
+      <div class="form-group"><label>Email / Username</label><input type="email" placeholder="teacher@school.edu"/></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"/></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Sign In</button>
+      <div class="notice-box">Demo mode — click Sign In with any credentials</div>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="form-group"><label>Full Name</label><input type="text" placeholder="Maria Santos"/></div>
+      <div class="form-group"><label>Teacher ID</label><input type="text" placeholder="TCH-2024-001"/></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="m.santos@school.edu"/></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Create password"/></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="mainApp" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>EduManage LMS</h1>
+      <p>Teacher Portal</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-screen="dashboard" onclick="navTo('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-screen="profile" onclick="navTo('profile',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+        Teacher Profile
+      </div>
+      <div class="nav-item" data-screen="classes" onclick="navTo('classes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Class Information
+        <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" data-screen="curriculum" onclick="navTo('curriculum',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Course Curriculum
+      </div>
+      <div class="nav-item" data-screen="settings" onclick="navTo('settings',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="nav-item" onclick="doLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <div style="font-size:13px;color:var(--gray-600)">S.Y. 2024–2025 · 2nd Semester</div>
+        <div class="avatar">MS</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="grid-4" style="margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label">Subjects Handled</div><div class="stat-val">4</div><div class="stat-sub">This semester</div></div>
+          <div class="stat-card"><div class="stat-label">Total Students</div><div class="stat-val">128</div><div class="stat-sub">Enrolled</div></div>
+          <div class="stat-card"><div class="stat-label">Classes Today</div><div class="stat-val">3</div><div class="stat-sub">Wednesday</div></div>
+          <div class="stat-card"><div class="stat-label">Pending Grades</div><div class="stat-val">12</div><div class="stat-sub">Needs input</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Subjects Handled</div>
+          <div class="grid-2">
+            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
+              <div class="sc-code">MATH 10</div>
+              <h3>Mathematics — Grade 10</h3>
+              <p>32 students · Section Sampaguita</p>
             </div>
-            <div class="image-text-container">
-           <img src="https://assets.sutori.com/user-uploads/image/3bb36226-2dcd-480f-91aa-a661d9b52b68/c9790b4144989663fb512b20e4a0a402.gif"/>
-            <p
-            style="text-align: left;"> 
-            John von Neumann, a Hungarian-American mathematician and computer scientist, played a pivotal role in the development of the electronic digital computer. His groundbreaking work on computer architecture, including the concept of stored-program computers, significantly influenced the design of modern computers. He also contributed to fields like game theory, quantum mechanics, and operations research, making him one of the most famous computer scientists in history. His architecture, named after him, allowed for more complex designs by storing data and programs in the same address space of a computer's memory. 
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg/440px-Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg"/>
-            <p
-            style="text-align: left;"> 
-              Steve Jobs, co-founder of Apple Inc., revolutionized the tech industry with his innovative designs and user experience. His iconic products like the Macintosh and iPhone have shaped our interaction with technology. Jobs' leadership made Apple synonymous with cutting-edge design and unparalleled user experience, making him one of the most influential figures in the industry. He is also known as the creator of Pixar. Steve Jobs' impact on the world continues today through his accomplishments in technology, innovation, and product development.
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://assets.sutori.com/user-uploads/image/a1848180-76e8-4fbe-a85d-173018288468/5bdbd9daf44b677865a5f236d375f706.jpeg"/>
-            <p
-            style="text-align: left;"> 
-              Philip Donald Estridge, known as Don Estridge, led development of the original IBM Personal Computer, and thus is known as “father of the IBM PC”. Don Estridge gave Skellings' corporation an IBM contract to develop the Electric Literature series which featured the “Electric Poet” software. The initial IBM Personal Computer (PC), which is the current generation of computers, was developed under Philip Don Estridge's direction.  The company's primary goal was to get into the market for tiny computers. By using OEM off-the-shelf parts rather than developing new technology, IBM was able to keep costs down and produce PCs in less than a year. Furthermore, the software's open architecture enables the usage of peripherals made by different vendors. This implied that other businesses may begin producing computers that were compatible with IBM. When Apple decided to utilize Intel processors in their Macs instead of proprietary ones, it also employed this design.
-           </p> 
-           </div>
-           <div class="image-text-container">
-            <img src="https://assets.sutori.com/user-uploads/image/5596550e-419b-43f0-9c75-06cca169e8f4/d916f4d438a3b6f45969addb8a869b3e.jpeg"/>
-            <p
-            style="text-align: left;"> 
-            John von Neumann, a Hungarian-American mathematician and computer scientist, played a pivotal role in the development of the electronic digital computer. His work on architecture, including stored-program computers, influenced the design of modern computers. He also contributed to fields like game theory, quantum mechanics, and operations research. Tim Bernes-Lee invented the www, a system that allows sharing and updating information using hypertext. In 1989, he linked hypertext to the internet, connecting computer networks worldwide. He designed the first web browser and web server, transforming the world of computing, making the world wide web an essential part of daily life.
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://www.timeforkids.com/wp-content/uploads/2020/08/Grace_003.jpg?w=926"/>
-            <p
-            style="text-align: left;"> 
-            The creation of computer programming languages was greatly aided by the work of American computer scientist Grace Hopper. She wrote the first compiler, a software that converts code written in high-level languages into code that is readable by machines. Hopper also contributed to the development of one of the first high-level programming languages, COBOL. Her pioneering work as a software engineer opened the path for several subsequent computer scientists. She coined the word “bug” to describe a computer malfunction.
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://media.springernature.com/relative-r300-703_m1050/springer-static/image/art%3A10.1038%2F530282a/MediaObjects/41586_2016_Article_BF530282a_Figa_HTML.jpg?as=webp"/>
-            <p
-            style="text-align: left;"> 
-            American computer scientist Marvin Minsky was a pioneer in artificial intelligence. His revolutionary theories on machine learning algorithms and neural networks were created while he was a co-founder of the MIT Media Lab and the Stanford Artificial Intelligence Laboratory. The groundwork for current developments in artificial intelligence has been established by Minsky's contributions to robotics, cognitive science, and AI. Marvin Minsky built the first neural network device as a graduate student at Princeton. His theoretical writings of the 1950s and early '60s became the basis for virtually all subsequent research in artificial intelligence (AI)
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://cdn.facesofopensource.com/wp-content/uploads/2019/12/23003013/jamesgosling1617-1web-400x500.jpg"/>
-            <p
-            style="text-align: left;"> 
-            The developer of Java, one of the most popular programming languages available today, is Canadian computer scientist James Gosling. Software development was transformed by Java's "write once, run anywhere" attitude, which enabled applications to operate on several platforms without requiring modifications. Gosling's contributions to the Java language have had a significant influence on the software development process and the computing industry. The advancement of software engineering and computer science was significantly influenced by his work. He died in 2011, leaving a significant legacy in the field of computer science, for which he received many posthumous honors.
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://www.nasa.gov/wp-content/uploads/2016/11/26646856911_ca242812ee_o_1.jpg"/>
-            <p
-            style="text-align: left;"> 
-            Mathematician and computer scientist Katherine Johnson was instrumental in the early space flights of NASA. Her orbital mechanics calculations were crucial to the accomplishment of the first American human space missions, which included the historic orbit around the Earth completed by John Glenn. Through her extraordinary work at NASA, Johnson broke down barriers of race and gender, paving the way for future generations of women and people of color to pursue careers in computer science and mathematics. Among other groundbreaking crewed space missions, Johnson developed the calculations that enabled the US to launch its first astronaut into space in 1961 and land Apollo 11 on the moon safely in 1969.
-           </p> 
-           </div>
-           <div class="image-text-container">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBiWO8HwXm3xmgO0q3wpF-j2iq9__nq80FVw&s"/>
-            <p
-            style="text-align: left;">  
-            The Python programming language was created by Dutch computer scientist Guido van Rossum, who is most known for that. He is also known as the father of Python Programming Language. Because of its ease of use, clarity, and adaptability, Python is one of the most widely used programming languages worldwide, with applications ranging from web development to data science and artificial intelligence. The programming community has greatly benefited from Van Rossum's dedication to open-source development and his emphasis on readability of code, which has motivated a new generation of developers to produce clean, effective code.
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOrSLV9RJQh454eXNjiBM4N-S05BIx5NQovw&s"/>
-            <p
-            style="text-align: left;"> 
-            It was Danish computer scientist Bjarne Stroustrup who invented the C++ programming language. Stroustrup created C++, a strong, adaptable language that facilitates both procedural and object-oriented programming, building on the basis of the C language. Particularly for systems programming and game development, C++ has grown in popularity as a language for software development. Numerous programmers have benefited from Stroustrup's work, which has also advanced computer science. Stroustrup significantly influenced the development of C++ through his involvement in ISO standards, books, and numerous academic and popular papers over the years. 
-           </p> 
-           </div>
-           <div class="image-text-container">
-           <img src="https://wp.technologyreview.com/wp-content/uploads/2021/02/20210128_Keatley-Bill_Gates_0107_R.jpeg"/>
-           <p
-           style="text-align: left;"> 
-            In 1975, Bill Gates, an American computer scientist, entrepreneur, and philanthropist, and Paul Allen co-founded Microsoft, which sparked the creation of ground-breaking products including the Microsoft Office suite and Windows operating system. With his creation of software that has revolutionized our way of life and work, Bill Gates has left a lasting legacy in the computer business. Through the Bill and Melinda Gates Foundation, he has committed his wealth to charitable causes with an emphasis on eradicating poverty, advancing education, and improving global health. A major portion of Gates' wealth has been donated to charity through the Bill and Melinda Gates Foundation.
-           </p>
-           </div>
-           <div class="image-text-container">
-           <p>
-            Famous computer scientists have made significant contributions to the field of computer science, laying the groundwork for future advancements in areas such as artificial intelligence, cryptography, programming languages, and internet technologies. Their pioneering work is expected to significantly change the world of computing in the next 50 years, shaping the technology landscape and shaping the future of computing. Their contributions are truly remarkable and continue to shape our world.
-           </p>
-           </div> 
-           </article>  
-            <article> 
-                <h2>Revolution</h2> 
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                Our world is still being shaped by computing, which has an impact on how things are made, how information is accessed, and how people communicate with one another. It has also changed the way we think about the outside world and the cosmos. The advancement of computer technology is an enabling process rather than merely a series of innovations. One of the biggest advances in computing history is the web, which has paved the way for the development of quick, low-cost computers, reasonably priced disk storage, and networking technologies. As a result, an open-source development culture began to take shape, where communities contributed to and shared common operating systems, programming languages, and tools.
-                </p>
-                <p>
-                With the expansion of networks, software ownership, design, and control over environments might be drastically altered as tools created in one location could be quickly shared, promoted, and implemented elsewhere. As a result, the world wide web—a digital traffic infrastructure—was established. A rise in processing power made it possible to provide services remotely.
-                </p> 
-                <p>
-                With so many people using the internet, standalone computers have becoming less important. Search engines wouldn't work efficiently without behaviors to learn from, and human activities have integrated into the system. The problems of the field have altered substantially as a result of big data, which is fed by human data streams including traffic data, airline journeys, financial transactions, and social media. The data products also have an instantaneous influence on people. Nowadays, data-driven learning replaces the manual coding of algorithms to make decisions, potentially rendering entire disciplines of study useless.
-                </p> 
-                <p>
-                    19TH Century
-                </p>
-                <p>
-                1801: French inventor and trader Joseph Marie Jacquard creates a loom that mechanically weaves patterns into cloth using perforated wooden cards. Punch cards like to this were used by early computers.
-                </p>
-                <p>
-                1821: English mathematician Charles Babbage devises a steam-powered calculator in 1821 that can compute numerical tables. According to the University of Minnesota, the British government-funded "Difference Engine" experiment fails because of the state of technology at the time. 
-                </p>
-                <p>
-                1848: Ada Lovelace, an English mathematician and Lord Byron's daughter, created the first computer program in history in 1848. She did a translation from French into English of a paper on Babbage's Analytical Engine, adding her own notes that spanned three times the length of the transcript itself. In addition, Lovelace provided a detailed explanation on how to use Babbage's machine to compute Bernoulli numbers, making her the first computer programmer in history. A series of rational numbers known as Bernoulli numbers is frequently employed in calculation.
-                </p>
-                <p>
-                1853: The world's first printing calculator is created by Swedish inventor Per Georg Scheutz and his son Edvard. Uta C. Merzbach's book, "Georg Scheutz and the First Printing Calculator" (Smithsonian Institution Press, 1977), states that the machine is notable for being the first to "compute tabular differences and print the results."
-                </p>
-                <p>
-                1890: Herman Hollerith creates a punch-card technology to assist in the computation of the U.S. Counties. According to Columbia University, the computer saves the government many years' worth of computations and costs the American taxpayer around $5 million. Hollerith then starts a business that would ultimately become International Business Machines Corporation (IBM).
-                </p>
-                <p>
-                    Early 20TH Century
-                </p>
-                <p>
-                1931: According to Stanford University, Vannevar Bush creates and constructs the Differential Analyzer at the Massachusetts Institute of Technology (MIT), the first large-scale automated general-purpose mechanical analog computer. 
-                </p>
-                <p>
-                1936:In a paper titled "On Computable Numbers," British scientist and mathematician Alan Turing introduces the idea for a universal computer that would eventually be known as the Turing machine, according to Chris Bernhardt's book "Turing's Vision" (The MIT Press, 2017). Anything that can be computed can be computed by a Turing machine. His theories served as the foundation for the contemporary computer's main premise. The UK's National Museum of Computing states that Turing later contributed to the creation of the Turing-Welchman Bombe, an electromechanical device intended to break Nazi codes during World War II. 
-                </p>
-                <p>
-                1937: John Vincent Atanasoff, an Iowa State University professor of mathematics and physics, files a grant application to create the first computer that runs entirely on electricity without the need of gears, cams, belts, or shafts.
-                </p>
-                <p>
-                1939: In Palo Alto, California, David Packard and Bill Hewlett founded the Hewlett Packard Company in 1939. According to MIT, the two settle on the name of their new business by flipping a coin. Hewlett-Packard's first offices are located in Packard's garage.
-                </p>
-                <p>
-                1941:According to Gerard O'Regan's book "A Brief History of Computing" (Springer, 2021), German inventor and engineer Konrad Zuse completes his Z3 machine, the world's first digital computer. After Nazi Germany was defeated, Zuse left the German capital and launched the Z4, the first commercial digital computer, in 1950, according to O'Regan. The machine was destroyed during a bombing strike on Berlin during World War II. The first digital electronic computer in the United States, known as the Atanasoff-Berry Computer (ABC), was created in 1941 by Atanasoff and Clifford Berry, his doctoral student. The book "Birthing the Computer" (Cambridge Scholars Publishing, 2016) states that this is the first time a computer can store data in its main memory and can complete an operation every 15 seconds. 
-                </p>
-                <p>
-                1945: Two University of Pennsylvania professors, J. Mauchly and J. The Electronic Numerical Integrator and Calculator (ENIAC) was designed and built by Presper Eckert. That device is the first "automatic, general-purpose, electronic, decimal, digital computer," according to the book "Milestones in Computer Science and Information Technology" by Edwin D. Reilly (Greenwood Press, 2003). 
-                </p>
-                <p>
-                1946: After graduating from the University of Pennsylvania, Mauchly and Presper get money from the Census Bureau to create the UNIVAC, the first commercial computer used for government and corporate applications.
-                </p>
-                <p>
-                1947: The transistor is invented in 1947 by Bell Laboratories' William Shockley, John Bardeen, and Walter Brattain. They learn how to create an electric switch without a vacuum and using solid materials.
-                </p>
-                <p>
-                1949: The Electronic Delay Storage Automatic Calculator (EDSAC), "the first practical stored-program computer," is created by a team at the University of Cambridge, according to O'Regan. "EDSAC ran its first program in May 1949 when it calculated a table of squares and a list of prime numbers," O'Regan noted. Australia's first digital computer, the Council for Scientific and Industrial Research Automatic Computer (CSIRAC), was created in November 1949 by scientists working at the Council of Scientific and Industrial Research (CSIR), which is now known as CSIRO. According to O'Regan, CSIRAC is the first digital computer in history to play music.
-                </p>
-                <p>
-                    Late 20TH Century
-                </p>
-                <p>
-                1953: According to the National Museum of American History, Grace Hopper creates the first computer language, which later becomes known as COBOL, or COmmon, Business-Oriented Language. After her death, Hopper received a posthumous Presidential Medal of Freedom, earning her the nickname "First Lady of Software". The IBM 701 EDPM is created by Thomas Johnson Watson Jr., son of IBM CEO Thomas Johnson Watson Sr., to assist the UN in monitoring Korea during the conflict.
-                </p>
-                <p>
-                1954: John Backus, together with his IBM programming team, publishes a paper detailing their newly developed FORTRAN programming language. At MIT, FORTRAN stands for FORmula TRANslation.
-                </p>
-                <p>
-                1958: Jack Kilby and Robert Noyce introduce the integrated circuit, popularly referred to as the computer chip, in 1958. Kilby's efforts would win him the Nobel Prize in Physics.
-                </p>
-                <p>
-                1968: At the Fall Joint Computer Conference in San Francisco, Douglas Engelbart unveils a prototype of the modern computer. According to the Doug Engelbart Institute, he presents "A Research Center for Augmenting Human Intellect" and shows off a live computer demonstration complete with a mouse and graphical user interface (GUI). This signifies the evolution of the computer from a specialized tool for scholars to a technology that is more widely available.
-                </p>
-                <p>
-                1969: UNIX, an operating system that enabled "large-scale networking of diverse computing systems — and the internet — practical," was created in 1969 by Ken Thompson, Dennis Ritchie, and a team of other Bell Labs researchers. The UNIX development team proceeded to enhance the operating system by utilizing the optimized C programming language. 
-                </p>
-                <p>
-                1970: The first Dynamic Access Memory (DRAM) chip, the Intel 1103, is unveiled by the newly established Intel.
-                </p>
-                <p>
-                1971: Under the direction of Alan Shugart, a group of IBM engineers creates the "floppy disk," which allows data to be transferred between other computers.
-                </p>
-                <p>
-                1972: According to the Computer Museum of America, German-American engineer Ralph Baer introduces the world's first home game machine, the Magnavox Odyssey, in September of that year. A few months later, Pong—the first video game to be released in a profitable manner—is created by engineer Al Alcorn and businessman Nolan Bushnell in collaboration with Atari. 
-                </p>
-                <p>
-                1973: Xerox research staff member Robert Metcalfe creates Ethernet, a technology that connects several computers and other devices.
-                </p>
-                <p>
-                1974: With an 8-bit 6502 CPU from MOS Technology, the Commodore Personal Electronic Transactor (PET) is introduced to the home computer market in 1977. Its features include a cassette player, keyboard, and screen. According to O'Regan, the PET has particular success in the education sector.
-                </p>
-                <p>
-                1975: After seeing the magazine cover of "Popular Electronics" January issue, two "computer geeks," Paul Allen and Bill Gates, offer to write software for the Altair 8080 using the new BASIC language, highlighting it as the "world's first minicomputer kit to rival commercial models." Following the success of their initial venture, the two boyhood friends launch Microsoft, a software firm, on April 4.
-                </p>
-                <p>
-                1976: On April Fool's Day, Steve Jobs and Steve Wozniak co-founded Apple Computer. According to MIT, they introduce the Apple I, the first computer with a single circuit board and ROM (Read Only Memory).
-                </p>
-                <p>
-                1977: The National Museum of American History states that Radio Shack started manufacturing its first batch of 3,000 TRS-80 Model 1 computers, which were cheaply dubbed the "Trash 80" and cost $599. According to the book "How TRS-80 Enthusiasts Helped Spark the PC Revolution" (The Seeker Books, 2007), the business received 250,000 orders for the computer in less than a year.
-                </p>
-                <p>
-                1977: San Francisco hosts the inaugural West Coast Computer Faire. At the Faire, Jobs and Wozniak introduce the Apple II computer, which has color graphics and a storage audio cassette drive.
-                </p>
-                <p>
-                1978: The first computerized spreadsheet application, VisiCalc, is released in 1978.
-                </p>
-                <p>
-                Seymour Rubenstein, a software developer, created MicroPro International in 1979 and released WordStar, the first word processor to be commercially successful worldwide. According to Matthew G. Kirschenbaum's book "Track Changes: A Literary History of Word Processing" (Harvard University Press, 2016), WordStar was written by Rob Barnaby and has 137,000 lines of code.
-                </p>
-                <p>
-                1981: IBM releases "Acorn," their first personal computer, at $1,565 on the market. The MS-DOS operating system from Windows is used by Acorn. A monitor, printer, two diskettes, more memory, a gaming adaptor, and other features are available as options.
-                </p>
-                <p>
-                1983: According to the National Museum of American History (NMAH), the first personal computer with a graphical user interface (GUI) was the Apple Lisa, which stands for "Local Integrated Software Architecture" and also happens to be the name of Steve Jobs' daughter. The device also has icons and a drop-down menu. This year also sees the arrival of the Gavilan SC, the first flip-form portable computer that is marketed as a "laptop."According to the National Museum of American History (NMAH), the first personal computer with a graphical user interface (GUI) was the Apple Lisa, which stands for "Local Integrated Software Architecture" and also happens to be the name of Steve Jobs' daughter. The device also has icons and a drop-down menu. This year also sees the arrival of the Gavilan SC, the first flip-form portable computer that is marketed as a "laptop."
-                </p>
-                <p>
-                1984: During a Super Bowl commercial, Apple announces the Macintosh to the globe. The NMAH states that the Macintosh will retail for $2,500 when it launches. 
-                </p>
-                <p>
-                1985: he Guardian stated that Microsoft released Windows in November 1985 in reaction to the GUI of the Apple Lisa. Commodore, in the meantime, unveils the Amiga 1000.
-                </p>
-                <p>
-                1989: British researcher Tim Berners-Lee at CERN, the European Organization for Nuclear Research, proposes his idea for the World Wide Web. The foundation of the Web, Hyper Text Markup Language (HTML), is described in length in this work. 
-                </p>
-                <p>
-                1993: The Pentium microprocessor makes computer music and graphics more accessible.
-                </p>
-                <p>
-                1996: At Stanford University, Larry Page and Sergey Brin create the Google search engine.
-                </p>
-                <p>
-                1997: Microsoft makes a $150 million investment in Apple, which was having financial difficulties at the time.  With this investment, the legal dispute between Apple and Microsoft over alleged operating system plagiarism is resolved. 
-                </p>
-                <p>
-                1999: According to Wired, the phrase "wireless fidelity," or Wi-Fi, is invented. At first, it may be used up to 300 feet (91 meters) away.     
-                </p>
-                <p>
-                    21ST Century
-                </p>
-                <p>
-                2001: As the replacement for Apple's basic Mac operating system, Mac OS X—later renamed OS X and eventually just macOS—is introduced. Nine of OS X's sixteen versions have been given names based on large cats; the first was codenamed "Cheetah," according to TechRadar. Each of the 16 versions has the number "10" in its title. 
-                </p>
-                <p>
-                2003: The first 64-bit personal computer processor, the AMD Athlon 64, is made available to consumers in 2003. 
-                </p>
-                <p>
-                2004: The Mozilla Corporation releases Mozilla Firefox 1.0 in 2004. One of the first significant threats to Microsoft's Internet Explorer is the Web browser. The Web Design Museum claims that more than a billion people downloaded Firefox in its first five years of existence. 
-                </p>
-                <p>
-                2005: Google purchases Android, a mobile operating system built on Linux.
-                </p>
-                <p>
-                2006: Apple releases the MacBook Pro onto retail outlets. The Pro is the first dual-core, Intel-based mobile computer from the firm. 
-                </p>
-                <p>
-                2009: On July 22, Microsoft releases Windows 7. According to TechRadar, the new operating system has easy-to-access jumplists, quicker tile previews, the ability to disperse windows by shaking another window, and other features.
-                </p>
-                <p>
-                2010: Apple unveils their flagship portable tablet, the iPad.
-                </p>
-                <p>
-                2011: The debut of the Chromebook by Google, which is powered by Chrome OS.
-                </p>
-                <p>
-                2016: The first quantum computer with reprogrammability was developed. "Up until now, every quantum computing platform has been designed to attack a specific algorithm and hasn't been able to program new algorithms into its system," said Shantanu Debnath, the study's lead author and an optical engineer and quantum physicist at the University of Maryland, College Park.
-                </p>
-                <p>
-                2017: Using molecules as computers, the Defense Advanced Research Projects Agency (DARPA) is creating a new initiative called "Molecular Informatics" in 2017. "We may be able to harness the rich set of properties that chemistry offers for rapid, scalable information processing and storage," stated Anne Fischer, the program manager in the Defense Sciences Office of DARPA, in a release. "Millions of molecules exist, and each molecule has a unique three-dimensional atomic structure as well as variables such as shape, size, or even color. This richness provides a vast design space for exploring novel and multi-value ways to encode and process data beyond the 0s and 1s of current logic-based, digital architectures."
-                </p>
-                <p>
-                2019: A Google team created a quantum computer that could theoretically beat the strongest classical computer, being the first to establish quantum supremacy. However, this was only possible for a very narrow issue with no real-world use. In an article published in the magazine Nature the same year, the computer—dubbed "Sycamore"—was explained. It will take some time to achieve quantum advantage, which is the situation in which a quantum computer solves a problem with practical applications more quickly than the most potent conventional computer. 
-                </p>
-                <p>
-                2022: At the Oak Ridge Leadership Computing Facility (OLCF) in Tennessee, Frontier, the first exascale supercomputer and fastest in the world, went online. At a cost of $600 million, Frontier was constructed by Hewlett Packard Enterprise (HPE) and employs around 40,000 AMD Radeon Instinct MI250X GPUs in addition to approximately 10,000 AMD EPYC 7453 64-core CPUs. Exascale computing, which measures a system's performance by having systems that can produce more than one exaFLOP of power, was made possible by this computer. Currently, Frontier is the only computer that can achieve these kinds of performance levels. At the moment, it serves as a tool to support scientific research.
-                </p></article> 
-            <article> 
-                <h2>IT Synopsis</h2> 
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                Technology is essential to corporate operations because it boosts creativity, productivity, and efficiency. It makes information and technology usage simpler and faster by enabling distant connectivity, data storage, and security. With so many technological choices available, staff members may concentrate on creativity rather than logistics. Organizations are seeing a significant shift in how they integrate technology into many elements of their operations, known as digital transformation. In order to manage and monitor environments and ensure a successful digital transition, IT professionals might build up rules and regulations. Efficiency is increased by automated processes and data analysis, particularly in sectors like banking, healthcare, and transportation. The importance of IT for ongoing growth and success is demonstrated by the field's expansion and the need for IT specialists. 
-                </p> 
-                <p>
-                Individually utilized items are referred to as hardware, while programs that operate on hardware are referred to as software. For example, Microsoft Word is a piece of software that runs on a Windows computer that has a motherboard, hard drive, and central processor unit. An knowledge of IT necessitates a grasp of a number of physical components, such as the random access memory (RAM), which is used for temporary storage, the hard drive, which saves data, and the CPU, which receives electrical signals to transfer instructions. Information may be accessed and modified more quickly using RAM, whereas binary-encoded data is stored on the hard drive. The motherboard is a large circuit board that supports communication, provides power to the CPU and hard drive, and houses them. Comprehending these constituents is crucial for the efficient operation of a technology-driven infrastructure.
-                </p>
-                <p>
-                IT software, in conjunction with physical components, is critical to efficiency and productivity. The operating system of a computer is called system software, which is kept on the hard drive and transferred to RAM as needed. By providing instructions to the CPU, it enables the operating system to run applications, or application software. Word processors, spreadsheets, and web browsers are examples of application software that runs in RAM and uses electrical pulses to save data on the hard drive. Anti-virus and optimization programs are examples of utility software that runs on the hard disk and is typically invisible to the user.
-                </p>
-                <p>
-                IT is essential for both market competitiveness and company continuity. IT governance include controlling risks, developing strategy-supporting policies, and coordinating corporate objectives with IT. IT Operations Management saves time, money, and human resources by automating critical procedures that enable remote assistance and early problem identification. Data and networks must be protected by cybersecurity measures, especially as the number of attack surfaces posed by cloud-based apps and data storage grows. 
-                When it comes to patching, upgrading, automated monitoring, alerting, access restrictions, and strong credentials, IT personnel need to be extremely watchful. To safeguard sensitive data, database administration, frequent patching, and access control guidelines are essential. It is preferable to identify issues early on rather than later. Organizations must have data backups in place to guard against natural catastrophes and ransomware. IT service providers should provide functional material and frequent customer backups. The kind of backup relies on the requirements of the company; some use local, hybrid, cloud-based, or file storage solutions. IT specialists should go over the benefits and drawbacks of each and make sure backups happen on time. Network management is necessary to increase security and make sure that devices adhere to rules. 
-                Because virtualization reduces the number of servers required, it can save money and boost the efficiency of the IT staff. An essential part of the IT team's work is software troubleshooting, when technicians carry out intricate operations or automated inspections. Software must be free of bugs in order to maintain security and commercial operations. 
-                </p>
-                <p>
-                Since IT covers a wide range of topics, including integrated operations, data protection, and device management, it is imperative that one understands it. Difficult activities can be made easier by automated technologies like ITAM, ITOM, and remote monitoring and management systems. It is helpful to comprehend IT principles and operations as the world grows more reliant on digital and virtual technology. Other situations may benefit from the ability to automate monitoring duties and address problems. In a world where gadgets abound, everyone ought to grasp the fundamentals of using and maintaining them. Therefore, success in the sector requires a solid understanding of IT.
-                </p> </article> 
-            <article> 
-                <h2>Services</h2> 
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                The modern economy is based on information technology (IT), which makes it easier for data to move across devices and uses data analytics to help in decision-making. It is important in many areas, such as business, finance, education, healthcare, security, and employment. Through IT, students can keep up with the newest innovations and professors can stay current on new methods. IT makes it possible for traders and regular people to make online purchases in the financial industry while using computers to maintain track of accounts and transactions. While HR departments utilize specialist apps to manage hiring, employee remuneration, training, and termination, accounting departments use software to create financial statements and other bookkeeping tasks.
-                </p> 
-                <p>
-                Information technologies play a crucial role in the management of organizations in a variety of social production domains by rationalizing repetitious procedures by fusing scientific understanding with real-world application. Automated information technologies, implemented with hardware and software, are being used by modern organizations like DECIEM more and more to handle management difficulties. Modern IT departments' primary responsibilities include searching for data, gathering it, processing it, storing it, developing new technologies, and performing optimization activities.
-                </p>
-                <p>
-                IT has greatly improved healthcare, making it easier for physicians to communicate, examine patients, and consult with other specialists. Maintaining system passwords strong improves security by limiting arbitrary access to data.
-                </p>
-                <p>
-                IT has accelerated globalization, bridging language and geographic divides and bringing people closer together. Thanks to its benefits, which include accessibility, current teaching techniques, patient assistance, limitless access to entertainment media, and speedier interpersonal contact, IT has opened up hundreds of new industries and thousands of employment for IT experts. Over the past ten years, management information technologies have advanced to a new level of quality, giving managers the most up-to-date techniques for gathering and evaluating the social and economic data required for wise management decisions.
-                </p> </article>      
-            <article> 
-                <h2>References</h2> 
-                <p class="post-meta"> 
-                </p> 
-                <p> 
-                    Cosker, G. (2015). 10 Famous Computer Scientists Who Impacted the Industry | Rasmussen College. Rasmussen.edu. https://www.rasmussen.edu/degrees/technology/blog/famous-computer-scientists-who-impacted-the-industry/
-                </p>
-                <p>
-                    Frangoul, A. (2018, March 27). From the Apple Mac to the World Wide Web: Eight milestones in the development of computers and home technology. CNBC. https://www.cnbc.com/2018/03/27/eight-milestones-in-the-development-of-computers-and-home-technology.html
-                </p>
-                <p>
-                    Loeffler, J. (2019, July 13). 15 Most Significant Milestones in the History of the Computer. Interesting Engineering; Interesting Engineering. https://interestingengineering.com/lists/15-most-significant-milestones-in-the-history-of-the-computer
-                </p>
-                <p>
-                    ‌Williamson, T. (2021, December 1). History of computers: A brief timeline. Live Science. https://www.livescience.com/20718-computer-history.html
-                </p> </article>         
-        </main> 
-                    <aside> 
-            <h2>Recent Posts</h2> 
-            <ul> 
-                <li><a href="#">Home</a></li> 
-                <li><a href="#">History</a></li> 
-                <li><a href="#">Milestones</a></li> 
-                <li><a href="#">Pioneers</a></li> 
-                <li><a href="#">Revolution</a></li>
-                <li><a href="#">IT Synopsis</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">References</a></li>
-            </ul> 
-        </aside> 
-    </div> 
-        </div> 
+            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
+              <div class="sc-code">SCI 10</div>
+              <h3>Science — Grade 10</h3>
+              <p>30 students · Section Sampaguita</p>
+            </div>
+            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
+              <div class="sc-code">MATH 11</div>
+              <h3>Pre-Calculus — Grade 11</h3>
+              <p>35 students · STEM A</p>
+            </div>
+            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
+              <div class="sc-code">STAT 12</div>
+              <h3>Statistics — Grade 12</h3>
+              <p>31 students · STEM B</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">This Week's Schedule</div>
+          <div class="schedule-row"><div class="schedule-day">Mon</div><div style="flex:1;font-size:13.5px;font-weight:600">Mathematics — Grade 10 (Sec. Sampaguita)</div><div style="font-size:12px;color:var(--gray-400)">7:30–9:00 AM · Room 201</div></div>
+          <div class="schedule-row"><div class="schedule-day">Tue</div><div style="flex:1;font-size:13.5px;font-weight:600">Science — Grade 10 (Sec. Sampaguita)</div><div style="font-size:12px;color:var(--gray-400)">10:00–11:30 AM · Lab 1</div></div>
+          <div class="schedule-row"><div class="schedule-day">Wed</div><div style="flex:1;font-size:13.5px;font-weight:600">Pre-Calculus — Grade 11 (STEM A)</div><div style="font-size:12px;color:var(--gray-400)">8:00–9:30 AM · Room 305</div></div>
+          <div class="schedule-row"><div class="schedule-day">Wed</div><div style="flex:1;font-size:13.5px;font-weight:600">Statistics — Grade 12 (STEM B)</div><div style="font-size:12px;color:var(--gray-400)">1:00–2:30 PM · Room 306</div></div>
+          <div class="schedule-row" style="border:none"><div class="schedule-day">Fri</div><div style="flex:1;font-size:13.5px;font-weight:600">Pre-Calculus — Grade 11 (STEM A)</div><div style="font-size:12px;color:var(--gray-400)">8:00–9:30 AM · Room 305</div></div>
+        </div>
+      </div>
+
+      <!-- TEACHER PROFILE -->
+      <div class="screen" id="screen-profile">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Teacher Profile</div>
+            <button class="btn btn-gold btn-sm" id="profileEditBtn" onclick="toggleProfileEdit()">Edit Profile</button>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:28px;margin-bottom:20px">
+            <div>
+              <div class="profile-pic-circle" onclick="alert('Click to upload photo')">MS</div>
+              <div style="text-align:center;font-size:11px;color:var(--gray-400);margin-top:6px">Change photo</div>
+            </div>
+            <div style="flex:1">
+              <div class="grid-2" id="profileView">
+                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Full Name</div><div style="font-size:15px;font-weight:600" id="vName">Maria Santos</div></div>
+                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Teacher ID</div><div style="font-size:15px;font-weight:600">TCH-2024-001</div></div>
+                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Email</div><div style="font-size:15px;font-weight:600" id="vEmail">m.santos@school.edu</div></div>
+                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Department</div><div style="font-size:15px;font-weight:600" id="vDept">Science & Mathematics</div></div>
+              </div>
+              <div class="grid-2" id="profileEditForm" style="display:none">
+                <div class="form-group"><label>Full Name</label><input type="text" id="eName" value="Maria Santos"/></div>
+                <div class="form-group"><label>Teacher ID</label><input type="text" value="TCH-2024-001" disabled style="background:var(--gray-50)"/></div>
+                <div class="form-group"><label>Email</label><input type="email" id="eEmail" value="m.santos@school.edu"/></div>
+                <div class="form-group"><label>Department</label><input type="text" id="eDept" value="Science & Mathematics"/></div>
+              </div>
+              <div id="profileSaveRow" style="display:none;margin-top:10px">
+                <button class="btn btn-primary btn-sm" onclick="saveProfile()">Save Changes</button>
+                <button class="btn btn-outline btn-sm" style="margin-left:8px" onclick="cancelProfileEdit()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--gray-100);padding-top:16px">
+            <div style="font-size:12.5px;font-weight:700;color:var(--gray-600);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.6px">Subjects Handled</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <span class="tag">Mathematics — Grade 10</span>
+              <span class="tag">Science — Grade 10</span>
+              <span class="tag">Pre-Calculus — Grade 11</span>
+              <span class="tag">Statistics — Grade 12</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLASS INFORMATION -->
+      <div class="screen" id="screen-classes">
+        <div id="classesView">
+          <div class="section-header">
+            <div class="section-title">Class Information</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addClassModal')">+ Add Class</button>
+          </div>
+          <div class="grid-2">
+            <div class="card" style="cursor:pointer" onmouseenter="this.style.boxShadow='0 4px 16px rgba(107,26,42,0.12)'" onmouseleave="this.style.boxShadow=''" onclick="openClassDetail('MATH10','Mathematics — Grade 10')">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                <div><div style="background:var(--maroon-pale);color:var(--maroon);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px">MATH 10</div><div style="font-size:15px;font-weight:700">Mathematics — Grade 10</div><div style="font-size:12px;color:var(--gray-400);margin-top:3px">Section Sampaguita · 32 students</div></div>
+                <div style="font-size:11px;background:var(--gold-pale);color:var(--gold-dark);padding:3px 8px;border-radius:6px;font-weight:700">Q2</div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">32</div><div style="font-size:11px;color:var(--gray-400)">Students</div></div>
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">4</div><div style="font-size:11px;color:var(--gray-400)">Quizzes</div></div>
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">3</div><div style="font-size:11px;color:var(--gray-400)">Activities</div></div>
+              </div>
+            </div>
+            <div class="card" style="cursor:pointer" onmouseenter="this.style.boxShadow='0 4px 16px rgba(107,26,42,0.12)'" onmouseleave="this.style.boxShadow=''" onclick="openClassDetail('SCI10','Science — Grade 10')">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                <div><div style="background:var(--maroon-pale);color:var(--maroon);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px">SCI 10</div><div style="font-size:15px;font-weight:700">Science — Grade 10</div><div style="font-size:12px;color:var(--gray-400);margin-top:3px">Section Sampaguita · 30 students</div></div>
+                <div style="font-size:11px;background:var(--gold-pale);color:var(--gold-dark);padding:3px 8px;border-radius:6px;font-weight:700">Q2</div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">30</div><div style="font-size:11px;color:var(--gray-400)">Students</div></div>
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">3</div><div style="font-size:11px;color:var(--gray-400)">Quizzes</div></div>
+                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">4</div><div style="font-size:11px;color:var(--gray-400)">Activities</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLASS DETAIL -->
+        <div id="classDetailView" style="display:none">
+          <div class="breadcrumb">
+            <span onclick="backToClasses()">Class Information</span>
+            <span style="color:var(--gray-200)">›</span>
+            <span id="classDetailName" style="cursor:default;color:var(--gray-600)">—</span>
+          </div>
+          <div class="tab-bar" id="classDetailTabs">
+            <div class="tab active" onclick="switchClassTab('students',this)">Students</div>
+            <div class="tab" onclick="switchClassTab('grades',this)">Grade Book</div>
+            <div class="tab" onclick="switchClassTab('attendance',this)">Attendance</div>
+          </div>
+
+          <div id="ctab-students">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Search students…" oninput="renderStudents(this.value)"/>
+              </div>
+              <div class="toggle-view">
+                <div class="view-btn active" id="gridViewBtn" onclick="setView('grid')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+                <div class="view-btn" id="listViewBtn" onclick="setView('list')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('addStudentModal')">+ Add Student</button>
+            </div>
+            <div class="student-grid" id="studentGridView"></div>
+            <table id="studentListView" style="display:none">
+              <thead><tr><th>Name</th><th>Student ID</th><th>Final Grade</th><th>Actions</th></tr></thead>
+              <tbody id="studentListBody"></tbody>
+            </table>
+          </div>
+
+          <div id="ctab-grades" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-size:13px;color:var(--gray-600)">
+                Input fields: <span style="background:#FFF0F0;color:#C62828;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700;border:1px solid #FFCCCC">red</span> &nbsp;
+                Computed: <span style="background:#FFF8E1;color:var(--gold-dark);padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700">yellow</span>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm" onclick="addQuizColumn()">+ Quiz</button>
+                <button class="btn btn-outline btn-sm" onclick="addActivityColumn()">+ Activity</button>
+                <button class="btn btn-gold btn-sm" onclick="computeAllGrades()">Recompute All</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="grade-table" id="gradeTable">
+                <thead id="gradeHead"></thead>
+                <tbody id="gradeTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="ctab-attendance" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-size:13px;color:var(--gray-600)">Click a cell to toggle Present / Absent</div>
+              <button class="btn btn-primary btn-sm" onclick="addAttendanceDate()">+ Add Date</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table id="attendanceTable">
+                <thead id="attendanceHead"></thead>
+                <tbody id="attendanceBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT PROFILE -->
+      <div class="screen" id="screen-student">
+        <div class="breadcrumb">
+          <span onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">Class Information</span>
+          <span style="color:var(--gray-200)">›</span>
+          <span onclick="backToClassDetail()">Class Detail</span>
+          <span style="color:var(--gray-200)">›</span>
+          <span id="spBreadcrumb" style="color:var(--gray-600);cursor:default">Student</span>
+        </div>
+        <div style="display:flex;gap:24px;align-items:flex-start">
+          <div style="flex-shrink:0;text-align:center">
+            <div class="student-avatar" style="width:80px;height:80px;font-size:26px;margin:0 auto 10px" id="spAvatar">JD</div>
+            <div style="font-size:15px;font-weight:700;margin-bottom:3px" id="spName">—</div>
+            <div style="font-size:12px;color:var(--gray-400)" id="spId">—</div>
+          </div>
+          <div style="flex:1">
+            <div class="final-grade-banner" style="margin-bottom:16px">
+              <div>
+                <div style="font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Final Grade</div>
+                <div class="grade-num" id="spFinalGrade">—</div>
+                <div style="font-size:12px;opacity:0.6;margin-top:4px">Class Performance × 70% + Exam × 30%</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:11px;opacity:0.7">Class Performance (70%)</div>
+                <div style="font-size:24px;font-weight:700;color:var(--gold-light);margin:2px 0" id="spClassPerf">—</div>
+                <div style="font-size:11px;opacity:0.7;margin-top:8px">Major Exam (30%)</div>
+                <div style="font-size:24px;font-weight:700;color:var(--gold-light);margin-top:2px" id="spExamScore">—</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Score Breakdown</div>
+              <table id="spTable">
+                <thead><tr><th>Component</th><th>Raw</th><th>Weight</th><th>Weighted</th></tr></thead>
+                <tbody id="spTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURRICULUM -->
+      <div class="screen" id="screen-curriculum">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div class="section-title">Course Curriculum</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="currLevel" style="width:auto" onchange="renderCurriculum()">
+              <option value="basic">Basic Education</option>
+              <option value="undergrad">Undergraduate</option>
+            </select>
+            <select id="currPeriod" style="width:auto" onchange="renderCurriculum()">
+              <option value="q1">Quarter 1</option>
+              <option value="q2">Quarter 2</option>
+              <option value="q3">Quarter 3</option>
+              <option value="q4">Quarter 4</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addTopicModal')">+ Add Topic</button>
+          </div>
+        </div>
+        <div class="grid-2" id="curriculumGrid"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="screen" id="screen-settings">
+        <div class="card">
+          <div class="card-title">Account Settings</div>
+          <div class="settings-row">
+            <div><div style="font-size:13.5px;font-weight:500">Email Notifications</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Receive updates about grades and submissions</div></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div><div style="font-size:13.5px;font-weight:500">Two-Factor Authentication</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Extra security for your account</div></div>
+            <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row" style="border:none">
+            <div><div style="font-size:13.5px;font-weight:500">Auto-save Grade Book</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Save changes automatically every 30 seconds</div></div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Profile Settings</div>
+          <div class="grid-2">
+            <div class="form-group"><label>Display Name</label><input type="text" value="Ms. Maria Santos"/></div>
+            <div class="form-group"><label>Time Zone</label><select><option>Asia/Manila (UTC+8)</option><option>UTC</option></select></div>
+            <div class="form-group"><label>Academic Year</label><select><option>2024–2025</option><option>2023–2024</option></select></div>
+            <div class="form-group"><label>Grading Scale</label><select><option>Philippine DepEd (60–100)</option><option>Standard (0–100)</option></select></div>
+          </div>
+          <button class="btn btn-primary btn-sm">Save Settings</button>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:#8B2020">Danger Zone</div>
+          <div class="settings-row">
+            <div><div style="font-size:13.5px;font-weight:500">Reset Grade Book</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Clear all grade entries for the current period</div></div>
+            <button class="btn btn-danger btn-sm">Reset</button>
+          </div>
+          <div class="settings-row" style="border:none">
+            <div><div style="font-size:13.5px;font-weight:500">Log Out</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Sign out of all devices</div></div>
+            <button class="btn btn-danger btn-sm" onclick="doLogout()">Log Out</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="addStudentModal">
+  <div class="modal">
+    <div class="modal-title">Add Student</div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="newStudentName" placeholder="e.g. Ana Reyes"/></div>
+    <div class="form-group"><label>Student ID</label><input type="text" id="newStudentId" placeholder="STU-2024-XXX"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('addStudentModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="addStudent()">Add Student</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="editStudentModal">
+  <div class="modal">
+    <div class="modal-title">Edit Student</div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="editStudentName"/></div>
+    <div class="form-group"><label>Student ID</label><input type="text" id="editStudentId" disabled style="background:var(--gray-50)"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" onclick="removeStudent()">Remove</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-outline btn-sm" onclick="closeModal('editStudentModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEditStudent()">Save</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="addClassModal">
+  <div class="modal">
+    <div class="modal-title">Add Class</div>
+    <div class="form-group"><label>Subject Code</label><input type="text" placeholder="e.g. MATH 10"/></div>
+    <div class="form-group"><label>Subject Name</label><input type="text" placeholder="e.g. Mathematics — Grade 10"/></div>
+    <div class="form-group"><label>Section</label><input type="text" placeholder="e.g. Section Sampaguita"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('addClassModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('addClassModal')">Add Class</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="addTopicModal">
+  <div class="modal">
+    <div class="modal-title">Add Topic / Lesson</div>
+    <div class="form-group"><label>Topic Title</label><input type="text" id="newTopicTitle" placeholder="e.g. Quadratic Equations"/></div>
+    <div class="form-group"><label>Subject</label><select><option>Mathematics — Grade 10</option><option>Science — Grade 10</option><option>Pre-Calculus — Grade 11</option></select></div>
+    <div class="form-group"><label>Week / Duration</label><input type="text" placeholder="e.g. Week 3–4"/></div>
+    <div class="form-group"><label>Learning Objectives</label><textarea rows="3" placeholder="Students will be able to…"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('addTopicModal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="addTopic()">Add Topic</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS=['#6B1A2A','#8B2A3F','#5C4A1A','#1A4A5C','#2A5C1A','#4A1A5C','#1A3A5C','#5C2A1A'];
+let currentStudentIdx=-1;
+let students=[
+  {name:'Juan dela Cruz',id:'STU-2024-001'},
+  {name:'Ana Reyes',id:'STU-2024-002'},
+  {name:'Carlo Santos',id:'STU-2024-003'},
+  {name:'Maria Garcia',id:'STU-2024-004'},
+  {name:'Pedro Lim',id:'STU-2024-005'},
+  {name:'Rosa Aquino',id:'STU-2024-006'},
+  {name:'Jose Mendoza',id:'STU-2024-007'},
+  {name:'Liza Cruz',id:'STU-2024-008'},
+];
+let gradeData={};
+let attDates=['Jan 8','Jan 10','Jan 13','Jan 15','Jan 17'];
+let attData={};
+let quizCols=['QE1','QE2','QE3','QE4'];
+let actCols=['RA1','RA2','RA3'];
+let projCols=['P1','P2'];
+let currTopics=[
+  {title:'Patterns and Sequences',week:'Week 1–2'},
+  {title:'Polynomials & Polynomial Equations',week:'Week 3–4'},
+  {title:'Polynomial Functions',week:'Week 5–6'},
+  {title:'Circles & Tangent Lines',week:'Week 7–8'},
+  {title:'Plane Coordinate Geometry',week:'Week 9–10'},
+];
+
+function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function color(idx){return COLORS[idx%COLORS.length];}
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
+function rand(lo,hi){return Math.floor(Math.random()*(hi-lo+1))+lo;}
+
+function initGradeData(){
+  students.forEach(s=>{
+    if(!gradeData[s.id]){
+      gradeData[s.id]={
+        att:rand(17,20),part:rand(78,98),
+        qe:quizCols.map(()=>rand(72,98)),
+        ra:actCols.map(()=>rand(74,98)),
+        p:projCols.map(()=>rand(78,98)),
+        exam:rand(72,98)
+      };
+    }
+    if(!attData[s.id]){attData[s.id]={};attDates.forEach(d=>{attData[s.id][d]=Math.random()>0.12?'P':'A';});}
+  });
+}
+function computeFinal(d){
+  const qA=avg(d.qe||[]),raA=avg(d.ra||[]),pA=avg(d.p||[]);
+  const cp=(d.part||0)*0.1+qA*0.25+raA*0.25+pA*0.4;
+  const final=cp*0.7+(d.exam||0)*0.3;
+  return{cp:+cp.toFixed(1),exam:d.exam||0,final:+final.toFixed(1)};
+}
+
+function navTo(screen,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+screen).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard',profile:'Teacher Profile',classes:'Class Information',curriculum:'Course Curriculum',settings:'Settings',student:'Student Profile'};
+  document.getElementById('topbarTitle').textContent=titles[screen]||'';
+  if(screen==='curriculum')renderCurriculum();
+}
+function backToClasses(){document.getElementById('classesView').style.display='';document.getElementById('classDetailView').style.display='none';}
+function backToClassDetail(){navTo('classes',document.querySelector('[data-screen=classes]'));setTimeout(()=>{document.getElementById('classesView').style.display='none';document.getElementById('classDetailView').style.display='block';},50);}
+
+function openClassDetail(code,name){
+  document.getElementById('classesView').style.display='none';
+  document.getElementById('classDetailView').style.display='block';
+  document.getElementById('classDetailName').textContent=name||code;
+  initGradeData();
+  renderStudents();
+  renderGradeTable();
+  renderAttendance();
+  switchClassTab('students',document.querySelector('#classDetailTabs .tab'));
+}
+function switchClassTab(tab,el){
+  ['students','grades','attendance'].forEach(t=>{document.getElementById('ctab-'+t).style.display='none';});
+  document.getElementById('ctab-'+tab).style.display='block';
+  document.querySelectorAll('#classDetailTabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+function setView(v){
+  if(v==='grid'){document.getElementById('studentGridView').style.display='grid';document.getElementById('studentListView').style.display='none';document.getElementById('gridViewBtn').classList.add('active');document.getElementById('listViewBtn').classList.remove('active');}
+  else{document.getElementById('studentGridView').style.display='none';document.getElementById('studentListView').style.display='table';document.getElementById('gridViewBtn').classList.remove('active');document.getElementById('listViewBtn').classList.add('active');renderStudentList();}
+}
+function renderStudents(filter=''){
+  const f=filter.toLowerCase();
+  const list=students.filter(s=>!f||s.name.toLowerCase().includes(f)||s.id.toLowerCase().includes(f));
+  document.getElementById('studentGridView').innerHTML=list.map((s,i)=>{
+    const gi=students.indexOf(s);
+    const ini=initials(s.name);const col=color(gi);
+    return`<div class="student-card-grid" onclick="openStudentProfile(${gi})">
+      <div class="student-avatar" style="background:${col}">${ini}</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:2px">${s.name}</div>
+      <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px">${s.id}</div>
+      <div style="display:flex;gap:4px;justify-content:center">
+        <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 8px" onclick="event.stopPropagation();openEditStudent(${gi})">Edit</button>
+        <button class="btn btn-primary btn-sm" style="font-size:11px;padding:3px 8px" onclick="event.stopPropagation();openStudentProfile(${gi})">View</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderStudentList(){
+  document.getElementById('studentListBody').innerHTML=students.map((s,i)=>{
+    const d=gradeData[s.id];const f=d?computeFinal(d):null;const col=color(i);const ini=initials(s.name);
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:${col};color:#E8C04A;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name}</div></td>
+      <td style="color:var(--gray-400)">${s.id}</td>
+      <td><span class="badge badge-grade">${f?f.final:'—'}</span></td>
+      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openStudentProfile(${i})">View</button><button class="btn btn-outline btn-sm" onclick="openEditStudent(${i})">Edit</button></div></td>
+    </tr>`;
+  }).join('');
+}
+function openStudentProfile(idx){
+  const s=students[idx];currentStudentIdx=idx;
+  const d=gradeData[s.id];const f=d?computeFinal(d):{cp:'—',exam:'—',final:'—'};
+  document.getElementById('spBreadcrumb').textContent=s.name;
+  document.getElementById('spAvatar').textContent=initials(s.name);
+  document.getElementById('spAvatar').style.background=color(idx);
+  document.getElementById('spName').textContent=s.name;
+  document.getElementById('spId').textContent=s.id;
+  document.getElementById('spFinalGrade').textContent=f.final;
+  document.getElementById('spClassPerf').textContent=f.cp;
+  document.getElementById('spExamScore').textContent=f.exam;
+  if(d){
+    const qA=avg(d.qe||[]).toFixed(1),raA=avg(d.ra||[]).toFixed(1),pA=avg(d.p||[]).toFixed(1);
+    const cp=f.cp;
+    document.getElementById('spTableBody').innerHTML=`
+      <tr><td>Attendance</td><td>${d.att}/20</td><td>—</td><td>—</td></tr>
+      <tr><td>Class Participation</td><td>${d.part}</td><td>10%</td><td>${(d.part*0.1).toFixed(1)}</td></tr>
+      <tr><td>Quizzes / Exercises</td><td>${qA} avg</td><td>25%</td><td>${(qA*0.25).toFixed(1)}</td></tr>
+      <tr><td>Recitation / Activities</td><td>${raA} avg</td><td>25%</td><td>${(raA*0.25).toFixed(1)}</td></tr>
+      <tr><td>Projects</td><td>${pA} avg</td><td>40%</td><td>${(pA*0.4).toFixed(1)}</td></tr>
+      <tr style="background:var(--gold-pale)"><td><strong>Class Performance</strong></td><td colspan="2"><strong>× 70%</strong></td><td><strong>${cp}</strong></td></tr>
+      <tr><td>Major Examination</td><td>${d.exam}</td><td>30%</td><td>${(d.exam*0.3).toFixed(1)}</td></tr>
+      <tr style="background:var(--maroon-pale)"><td><strong style="color:var(--maroon)">FINAL GRADE</strong></td><td colspan="2"><strong style="color:var(--maroon)">Total</strong></td><td><strong style="color:var(--maroon)">${f.final}</strong></td></tr>`;
+  }
+  navTo('student',null);
+}
+function openEditStudent(idx){
+  currentStudentIdx=idx;const s=students[idx];
+  document.getElementById('editStudentName').value=s.name;
+  document.getElementById('editStudentId').value=s.id;
+  openModal('editStudentModal');
+}
+function saveEditStudent(){
+  if(currentStudentIdx>=0){students[currentStudentIdx].name=document.getElementById('editStudentName').value;renderStudents();}
+  closeModal('editStudentModal');
+}
+function removeStudent(){if(currentStudentIdx>=0){students.splice(currentStudentIdx,1);initGradeData();renderStudents();renderGradeTable();}closeModal('editStudentModal');}
+function addStudent(){
+  const name=document.getElementById('newStudentName').value.trim();
+  const id=document.getElementById('newStudentId').value.trim()||`STU-2024-0${students.length+10}`;
+  if(!name)return;
+  students.push({name,id});initGradeData();renderStudents();renderGradeTable();
+  document.getElementById('newStudentName').value='';document.getElementById('newStudentId').value='';
+  closeModal('addStudentModal');
+}
+
+function addQuizColumn(){const n=prompt('Quiz name (e.g. QE5):');if(n&&!quizCols.includes(n)){quizCols.push(n);students.forEach(s=>{if(gradeData[s.id])gradeData[s.id].qe.push(rand(72,98));});renderGradeTable();}}
+function addActivityColumn(){const n=prompt('Activity name (e.g. RA4):');if(n&&!actCols.includes(n)){actCols.push(n);students.forEach(s=>{if(gradeData[s.id])gradeData[s.id].ra.push(rand(74,98));});renderGradeTable();}}
+
+function renderGradeTable(){
+  const head=document.getElementById('gradeHead');
+  const body=document.getElementById('gradeTableBody');
+  head.innerHTML=`<tr>
+    <th style="min-width:130px">Student</th>
+    <th class="grade-cell-fixed">Att.</th>
+    <th class="grade-cell-fixed">Part (10%)</th>
+    ${quizCols.map(q=>`<th class="grade-cell-fixed" style="min-width:65px">${q}</th>`).join('')}
+    ${actCols.map(r=>`<th class="grade-cell-fixed" style="min-width:65px">${r}</th>`).join('')}
+    ${projCols.map(p=>`<th class="grade-cell-fixed" style="min-width:65px">${p}</th>`).join('')}
+    <th class="grade-cell-computed" style="min-width:80px">Class Perf (70%)</th>
+    <th class="grade-cell-fixed" style="min-width:75px">Major Exam</th>
+    <th class="grade-cell-computed" style="min-width:80px">Exam (30%)</th>
+    <th style="background:var(--maroon);color:var(--white);font-size:12px;text-align:center;min-width:90px">Final Grade</th>
+  </tr>`;
+  body.innerHTML=students.map((s,si)=>{
+    const d=gradeData[s.id];if(!d)return'';
+    const f=computeFinal(d);const col=color(si);const ini=initials(s.name);
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:22px;border-radius:50%;background:${col};color:#E8C04A;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name.split(' ')[0]}</div></td>
+      <td style="text-align:center">${d.att}/20</td>
+      <td><input type="number" min="0" max="100" value="${d.part}" style="width:60px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].part=+this.value;recompute('${s.id}')"/></td>
+      ${d.qe.map((q,i)=>`<td><input type="number" min="0" max="100" value="${q}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].qe[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
+      ${d.ra.map((r,i)=>`<td><input type="number" min="0" max="100" value="${r}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].ra[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
+      ${d.p.map((p,i)=>`<td><input type="number" min="0" max="100" value="${p}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].p[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
+      <td class="grade-cell-computed" id="cp-${s.id}">${f.cp}</td>
+      <td><input type="number" min="0" max="100" value="${d.exam}" style="width:62px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].exam=+this.value;recompute('${s.id}')"/></td>
+      <td class="grade-cell-computed" id="eg-${s.id}">${(d.exam*0.3).toFixed(1)}</td>
+      <td style="text-align:center"><span style="background:var(--maroon);color:var(--white);font-weight:800;font-size:13px;padding:4px 10px;border-radius:6px;display:inline-block" id="fg-${s.id}">${f.final}</span></td>
+    </tr>`;
+  }).join('');
+}
+function recompute(sid){
+  const d=gradeData[sid];if(!d)return;
+  const f=computeFinal(d);
+  const cp=document.getElementById('cp-'+sid);const eg=document.getElementById('eg-'+sid);const fg=document.getElementById('fg-'+sid);
+  if(cp)cp.textContent=f.cp;if(eg)eg.textContent=(d.exam*0.3).toFixed(1);if(fg)fg.textContent=f.final;
+}
+function computeAllGrades(){students.forEach(s=>recompute(s.id));}
+
+function renderAttendance(){
+  document.getElementById('attendanceHead').innerHTML=`<tr><th>Student</th>${attDates.map(d=>`<th style="text-align:center;min-width:70px">${d}</th>`).join('')}<th style="text-align:center">Total</th></tr>`;
+  document.getElementById('attendanceBody').innerHTML=students.map((s,si)=>{
+    const col=color(si);const ini=initials(s.name);
+    const pres=attData[s.id]?Object.values(attData[s.id]).filter(v=>v==='P').length:0;
+    return`<tr><td><div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:22px;border-radius:50%;background:${col};color:#E8C04A;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name.split(' ')[0]}</div></td>
+    ${attDates.map(d=>{const v=attData[s.id]?attData[s.id][d]:'—';return`<td style="text-align:center;cursor:pointer" onclick="toggleAtt('${s.id}','${d}',this)"><span class="badge ${v==='P'?'badge-present':'badge-absent'}">${v}</span></td>`}).join('')}
+    <td style="text-align:center;font-weight:700">${pres}/${attDates.length}</td></tr>`;
+  }).join('');
+}
+function toggleAtt(sid,date,td){
+  if(!attData[sid])attData[sid]={};
+  attData[sid][date]=attData[sid][date]==='P'?'A':'P';
+  const v=attData[sid][date];
+  td.innerHTML=`<span class="badge ${v==='P'?'badge-present':'badge-absent'}">${v}</span>`;
+  renderAttendance();
+}
+function addAttendanceDate(){
+  const d=prompt('Enter date label (e.g. Jan 20):');
+  if(d&&!attDates.includes(d)){
+    attDates.push(d);
+    students.forEach(s=>{if(!attData[s.id])attData[s.id]={};attData[s.id][d]='P';});
+    renderAttendance();
+  }
+}
+
+function toggleProfileEdit(){
+  const editing=document.getElementById('profileEditForm').style.display!=='none';
+  if(editing){cancelProfileEdit();}else{
+    document.getElementById('profileView').style.display='none';
+    document.getElementById('profileEditForm').style.display='grid';
+    document.getElementById('profileSaveRow').style.display='block';
+    document.getElementById('profileEditBtn').textContent='Cancel';
+  }
+}
+function saveProfile(){
+  document.getElementById('vName').textContent=document.getElementById('eName').value;
+  document.getElementById('vEmail').textContent=document.getElementById('eEmail').value;
+  document.getElementById('vDept').textContent=document.getElementById('eDept').value;
+  cancelProfileEdit();
+}
+function cancelProfileEdit(){
+  document.getElementById('profileView').style.display='grid';
+  document.getElementById('profileEditForm').style.display='none';
+  document.getElementById('profileSaveRow').style.display='none';
+  document.getElementById('profileEditBtn').textContent='Edit Profile';
+}
+
+function renderCurriculum(){
+  const subjects=['Mathematics — Grade 10','Science — Grade 10'];
+  document.getElementById('curriculumGrid').innerHTML=subjects.map(subj=>`
+    <div class="card">
+      <div class="card-title">${subj}</div>
+      ${currTopics.map((t,i)=>`
+        <div class="curriculum-item">
+          <div class="ci-num">${i+1}</div>
+          <div style="flex:1"><div style="font-size:13.5px;font-weight:500">${t.title}</div><div style="font-size:11px;color:var(--gray-400)">${t.week}</div></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 8px" onclick="editTopic(${i})">Edit</button>
+            <button class="btn btn-danger btn-sm" style="font-size:11px;padding:3px 8px" onclick="removeTopic(${i})">✕</button>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function addTopic(){const t=document.getElementById('newTopicTitle').value.trim();if(!t)return;currTopics.push({title:t,week:'Upcoming'});renderCurriculum();closeModal('addTopicModal');document.getElementById('newTopicTitle').value='';}
+function editTopic(i){const t=prompt('Edit topic:',currTopics[i].title);if(t){currTopics[i].title=t;renderCurriculum();}}
+function removeTopic(i){if(confirm('Remove this topic?')){currTopics.splice(i,1);renderCurriculum();}}
+
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.style.display='none';}));
+
+function switchLoginTab(tab){
+  document.querySelectorAll('.login-tab').forEach((t,i)=>{t.classList.toggle('active',i===(tab==='login'?0:1));});
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
+}
+function doLogin(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainApp').style.display='flex';
+  initGradeData();renderStudents();
+}
+function doLogout(){
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+initGradeData();
+renderCurriculum();
+</script>
+</body>
+</html>
