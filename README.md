@@ -1,835 +1,1126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EduManage LMS — Teacher Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management & Ticketing — University System</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --maroon:#6B1A2A;--maroon-dark:#4A0F1C;--maroon-light:#8B2A3F;--maroon-pale:#F5E8EB;
-  --gold:#C9A227;--gold-light:#E8C04A;--gold-pale:#FDF6E3;--gold-dark:#A07A10;
-  --white:#fff;--gray-50:#F8F7F5;--gray-100:#EDEDEA;--gray-200:#D4D3CE;--gray-400:#9A9890;--gray-600:#5C5A54;--gray-800:#2C2C2A;
-  --sidebar-w:220px;--font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;
-}
-body{font-family:var(--font-body);background:var(--gray-50);color:var(--gray-800);overflow-x:hidden}
-.app{display:flex;min-height:100vh}
-.sidebar{width:var(--sidebar-w);background:var(--maroon-dark);color:var(--white);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
-.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(201,162,39,0.3)}
-.sidebar-logo h1{font-family:var(--font-display);font-size:16px;color:var(--gold-light);line-height:1.3}
-.sidebar-logo p{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px}
-.sidebar-nav{flex:1;padding:12px 0}
-.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:13.5px;font-weight:500;color:rgba(255,255,255,0.75);transition:all 0.18s;border-left:3px solid transparent}
-.nav-item:hover{background:rgba(201,162,39,0.12);color:var(--white)}
-.nav-item.active{background:rgba(201,162,39,0.18);color:var(--gold-light);border-left-color:var(--gold)}
-.nav-item svg{width:16px;height:16px;opacity:0.8;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--gold);color:var(--maroon-dark);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
-.sidebar-bottom{padding:12px 0;border-top:1px solid rgba(255,255,255,0.1)}
-.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--white);border-bottom:1px solid var(--gray-100);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--maroon)}
-.topbar-right{display:flex;align-items:center;gap:12px}
-.avatar{width:34px;height:34px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--font-display)}
-.content{padding:28px;flex:1}
-.screen{display:none}.screen.active{display:block}
-.card{background:var(--white);border-radius:12px;border:1px solid var(--gray-100);padding:20px 24px;margin-bottom:16px}
-.card-title{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--maroon);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.stat-card{background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:14px 16px}
-.stat-label{font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;font-weight:600}
-.stat-val{font-size:26px;font-weight:700;font-family:var(--font-display);color:var(--maroon)}
-.stat-sub{font-size:12px;color:var(--gray-400);margin-top:2px}
-.subject-card{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-light) 100%);color:var(--white);border-radius:12px;padding:18px 20px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;position:relative;overflow:hidden}
-.subject-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(107,26,42,0.25)}
-.subject-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(201,162,39,0.2);border-radius:50%}
-.subject-card h3{font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:4px;position:relative;z-index:1}
-.subject-card p{font-size:12px;opacity:0.75;position:relative;z-index:1}
-.sc-code{font-size:11px;background:rgba(201,162,39,0.3);color:var(--gold-light);padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px;font-weight:600;position:relative;z-index:1}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.16s;font-family:var(--font-body)}
-.btn-primary{background:var(--maroon);color:var(--white)}.btn-primary:hover{background:var(--maroon-light)}
-.btn-gold{background:var(--gold);color:var(--maroon-dark)}.btn-gold:hover{background:var(--gold-light)}
-.btn-outline{background:transparent;color:var(--maroon);border:1.5px solid var(--maroon)}.btn-outline:hover{background:var(--maroon-pale)}
-.btn-sm{padding:5px 12px;font-size:12px}
-.btn-danger{background:#f5e8e8;color:#8B2020;border:none}.btn-danger:hover{background:#f0d0d0}
-input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-family:var(--font-body);font-size:13.5px;color:var(--gray-800);background:var(--white);transition:border 0.16s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--maroon)}
-label{font-size:12.5px;font-weight:600;color:var(--gray-600);display:block;margin-bottom:5px}
-.form-group{margin-bottom:14px}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:14px;line-height:1.5}
+.hidden{display:none!important}
+/* LOGIN */
+#login-screen{min-height:600px;display:flex;align-items:center;justify-content:center;background:var(--color-background-tertiary)}
+.login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:2rem;width:100%;max-width:360px}
+.login-logo{text-align:center;margin-bottom:1.5rem}
+.login-logo h2{font-size:16px;font-weight:500;margin-top:8px}
+.login-logo p{font-size:12px;color:var(--color-text-secondary)}
+/* APP */
+#app-screen{display:none}
+.app{display:flex;min-height:600px}
+.sidebar{width:210px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-top{padding:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sidebar-top h1{font-size:13px;font-weight:500}
+.sidebar-top p{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.sidebar-user{padding:10px 1rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#185FA5;flex-shrink:0}
+.sidebar-nav{flex:1;padding:6px 0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 1rem;cursor:pointer;color:var(--color-text-secondary);font-size:13px;transition:all 0.1s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-left-color:#378ADD}
+.nav-icon{width:15px;text-align:center;font-size:13px;flex-shrink:0}
+.sidebar-bottom{padding:10px 1rem;border-top:0.5px solid var(--color-border-tertiary)}
+.main{flex:1;overflow:auto;min-width:0}
+.page{display:none;padding:1.25rem}
+.page.active{display:block}
+.page-header{margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.page-title{font-size:18px;font-weight:500}
+.page-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+/* BUTTONS */
+.btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;font-family:var(--font-sans);transition:background 0.1s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:#378ADD;border-color:#378ADD;color:#fff}
+.btn-primary:hover{background:#185FA5;border-color:#185FA5}
+.btn-danger{background:#E24B4A;border-color:#E24B4A;color:#fff}
+.btn-danger:hover{background:#A32D2D;border-color:#A32D2D}
+.btn-success{background:#639922;border-color:#639922;color:#fff}
+.btn-success:hover{background:#3B6D11}
+.btn-sm{padding:3px 9px;font-size:12px}
+/* CARDS */
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.card-flush{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:1rem}
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.25rem}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.875rem;text-align:center}
+.metric-val{font-size:26px;font-weight:500}
+.metric-label{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+/* TABLES */
+.tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:var(--maroon-pale);color:var(--maroon);font-weight:700;padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.6px}
-td{padding:9px 12px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
-tr:hover td{background:var(--gray-50)}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
-.badge-present{background:#E8F5E2;color:#2E7D32}
-.badge-absent{background:#FFEBEE;color:#C62828}
-.badge-grade{background:var(--gold-pale);color:var(--gold-dark)}
-.tab-bar{display:flex;gap:4px;background:var(--gray-100);border-radius:10px;padding:4px;margin-bottom:20px}
-.tab{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-600);transition:all 0.16s}
-.tab.active{background:var(--white);color:var(--maroon);box-shadow:0 1px 4px rgba(0,0,0,0.1)}
-.grade-table input[type=number]{width:60px;text-align:center;padding:4px;font-size:12px}
-.grade-cell-computed{background:#FFF8E1;color:var(--gold-dark);font-weight:700;text-align:center;font-size:13px}
-.grade-cell-fixed{background:var(--maroon-pale);color:var(--maroon);font-weight:700;font-size:12px;text-align:center}
-.search-box{position:relative;flex:1}
-.search-box input{padding-left:34px}
-.search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-400)}
-.student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.student-card-grid{background:var(--white);border:1px solid var(--gray-100);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.16s}
-.student-card-grid:hover{border-color:var(--maroon);box-shadow:0 4px 12px rgba(107,26,42,0.12)}
-.student-avatar{width:52px;height:52px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-family:var(--font-display);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
-.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-400);margin-bottom:18px}
-.breadcrumb span{cursor:pointer;color:var(--maroon);font-weight:500}.breadcrumb span:hover{text-decoration:underline}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.section-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--maroon)}
-.final-grade-banner{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-light) 100%);color:var(--white);border-radius:12px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
-.grade-num{font-size:42px;font-weight:800;font-family:var(--font-display);color:var(--gold-light)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center}
+th{text-align:left;padding:8px 12px;background:var(--color-background-secondary);color:var(--color-text-secondary);font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap}
+td{padding:7px 12px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--color-background-secondary)}
+/* BADGES */
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-blue{background:#E6F1FB;color:#0C447C}
+.b-green{background:#EAF3DE;color:#27500A}
+.b-amber{background:#FAEEDA;color:#633806}
+.b-red{background:#FCEBEB;color:#791F1F}
+.b-gray{background:#F1EFE8;color:#444441}
+.b-purple{background:#EEEDFE;color:#3C3489}
+.b-teal{background:#E1F5EE;color:#085041}
+/* FORMS */
+input,select,textarea{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#378ADD;box-shadow:0 0 0 2px rgba(55,138,221,0.12)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:12px;color:var(--color-text-secondary);font-weight:500}
+.span2{grid-column:1/-1}
+/* MODALS */
+.modal-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-start;justify-content:center;padding-top:40px;min-height:600px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:14px;padding:28px;width:420px;max-width:90vw;max-height:80vh;overflow-y:auto}
-.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--maroon);margin-bottom:18px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
-.schedule-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
-.schedule-day{width:70px;font-size:12px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px}
-.profile-pic-circle{width:90px;height:90px;border-radius:50%;background:var(--maroon);color:var(--gold-light);font-family:var(--font-display);font-size:30px;font-weight:700;display:flex;align-items:center;justify-content:center;border:3px solid var(--gold);cursor:pointer}
-.tag{display:inline-flex;align-items:center;padding:3px 10px;background:var(--maroon-pale);color:var(--maroon);border-radius:20px;font-size:12px;font-weight:600}
-.curriculum-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
-.ci-num{width:28px;height:28px;border-radius:50%;background:var(--maroon-pale);color:var(--maroon);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ci-title{flex:1;font-size:13.5px;font-weight:500}
-.login-screen{min-height:100vh;background:linear-gradient(135deg,var(--maroon-dark) 0%,var(--maroon) 60%,var(--maroon-light) 100%);display:flex;align-items:center;justify-content:center;padding:24px;position:fixed;inset:0;z-index:300}
-.login-card{background:var(--white);border-radius:16px;padding:36px;width:380px;max-width:95vw}
-.login-logo{text-align:center;margin-bottom:24px}
-.login-logo h1{font-family:var(--font-display);font-size:22px;color:var(--maroon);font-weight:700}
-.login-logo p{font-size:13px;color:var(--gray-400);margin-top:4px}
-.login-tabs{display:flex;gap:4px;background:var(--gray-100);border-radius:10px;padding:4px;margin-bottom:20px}
-.login-tab{flex:1;padding:8px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-600);text-align:center;transition:all 0.16s}
-.login-tab.active{background:var(--white);color:var(--maroon)}
-.gold-divider{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));border-radius:2px;margin:0 0 20px}
-.notice-box{background:var(--gray-50);border:1px dashed var(--gray-200);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--gray-600);text-align:center;margin-top:10px}
-.toggle-view{display:flex;gap:4px}
-.view-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:7px;cursor:pointer;border:1.5px solid var(--gray-200);color:var(--gray-400);background:var(--white);transition:all 0.15s}
-.view-btn.active{border-color:var(--maroon);color:var(--maroon);background:var(--maroon-pale)}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100)}
-.toggle-switch{width:42px;height:24px;border-radius:12px;background:var(--gray-200);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
-.toggle-switch.on{background:var(--maroon)}
-.toggle-switch::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:white;top:3px;left:3px;transition:left 0.2s}
-.toggle-switch.on::after{left:21px}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:1.5rem;width:90%;max-width:580px;max-height:80vh;overflow-y:auto;position:relative}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.modal-title{font-size:15px;font-weight:500}
+.modal-close{cursor:pointer;color:var(--color-text-secondary);background:none;border:none;font-size:17px;padding:0 2px;line-height:1}
+.modal-ft{display:flex;justify-content:flex-end;gap:8px;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+/* MISC */
+.search-row{display:flex;gap:8px;margin-bottom:0.875rem;align-items:center}
+.search-row input{flex:1;max-width:280px}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+.err-msg{font-size:12px;color:var(--color-text-danger);margin-top:4px;display:none}
+.info-msg{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+/* CHARTS */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.chart-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.chart-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px}
+/* BAR CHART */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bar-label{font-size:11px;color:var(--color-text-secondary);width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:var(--color-background-secondary);border-radius:3px;height:14px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.3s}
+.bar-val{font-size:11px;color:var(--color-text-secondary);min-width:24px;text-align:right}
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;gap:12px}
+.donut-legend{font-size:11px;display:flex;flex-direction:column;gap:5px}
+.legend-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
+/* TICKET PRINT */
+.ticket-print{background:var(--color-background-primary);border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;max-width:440px;margin:0 auto}
+.ticket-hd{background:#185FA5;color:#fff;border-radius:var(--border-radius-md);padding:0.875rem 1rem;margin-bottom:1rem;text-align:center}
+.ticket-body{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.ticket-field p:first-child{font-size:11px;color:var(--color-text-secondary)}
+.ticket-field p:last-child{font-size:13px;font-weight:500;margin-top:1px}
+.ticket-field{margin-bottom:8px}
+/* VALIDATE */
+.val-success{background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success);padding:1rem;border-radius:var(--border-radius-md);display:none;margin-top:0.75rem}
+.val-error{background:var(--color-background-danger);border:0.5px solid var(--color-border-danger);color:var(--color-text-danger);padding:1rem;border-radius:var(--border-radius-md);display:none;margin-top:0.75rem}
+.val-warn{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);color:var(--color-text-warning);padding:1rem;border-radius:var(--border-radius-md);display:none;margin-top:0.75rem}
 </style>
-</head>
-<body>
+
+<div id="root" style="position:relative;min-height:600px">
 
 <!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
+<div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
-      <div style="font-size:36px;margin-bottom:8px">🎓</div>
-      <h1>EduManage LMS</h1>
-      <p>Teacher's Learning Management System</p>
+      <div style="width:48px;height:48px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:20px">&#127891;</div>
+      <h2>Event Management &amp; Ticketing</h2>
+      <p>University System — Admin Portal</p>
     </div>
-    <div class="gold-divider"></div>
-    <div class="login-tabs">
-      <div class="login-tab active" onclick="switchLoginTab('login')">Sign In</div>
-      <div class="login-tab" onclick="switchLoginTab('register')">Register</div>
+    <div class="form-group" style="margin-bottom:10px">
+      <label class="form-label">Username</label>
+      <input type="text" id="login-user" placeholder="admin" value="admin">
     </div>
-    <div id="loginForm">
-      <div class="form-group"><label>Email / Username</label><input type="email" placeholder="teacher@school.edu"/></div>
-      <div class="form-group"><label>Password</label><input type="password" placeholder="••••••••"/></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Sign In</button>
-      <div class="notice-box">Demo mode — click Sign In with any credentials</div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Password</label>
+      <input type="password" id="login-pass" placeholder="password" value="admin123" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <div id="registerForm" style="display:none">
-      <div class="form-group"><label>Full Name</label><input type="text" placeholder="Maria Santos"/></div>
-      <div class="form-group"><label>Teacher ID</label><input type="text" placeholder="TCH-2024-001"/></div>
-      <div class="form-group"><label>Email</label><input type="email" placeholder="m.santos@school.edu"/></div>
-      <div class="form-group"><label>Password</label><input type="password" placeholder="Create password"/></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Create Account</button>
-    </div>
+    <div id="login-err" class="err-msg" style="display:none;margin-bottom:8px">Invalid credentials. Try admin / admin123</div>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Sign In</button>
+    <p style="font-size:11px;color:var(--color-text-secondary);text-align:center;margin-top:10px">Credentials: admin / admin123</p>
   </div>
 </div>
 
 <!-- APP -->
-<div class="app" id="mainApp" style="display:none">
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <h1>EduManage LMS</h1>
-      <p>Teacher Portal</p>
+<div id="app-screen">
+<div class="app">
+
+<nav class="sidebar">
+  <div class="sidebar-top">
+    <h1>EventTicket</h1>
+    <p>University System</p>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">A</div>
+    <div style="min-width:0">
+      <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="user-name">Admin</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Administrator</div>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-item active" data-screen="dashboard" onclick="navTo('dashboard',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Dashboard
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" id="nav-dashboard" onclick="goPage('dashboard',this)"><span class="nav-icon">&#9782;</span>Dashboard</div>
+    <div class="nav-item" id="nav-events" onclick="goPage('events',this)"><span class="nav-icon">&#128197;</span>Manage Events</div>
+    <div class="nav-item" id="nav-venues" onclick="goPage('venues',this)"><span class="nav-icon">&#127968;</span>Venues</div>
+    <div class="nav-item" id="nav-orgs" onclick="goPage('orgs',this)"><span class="nav-icon">&#128101;</span>Organizations</div>
+    <div class="nav-item" id="nav-categories" onclick="goPage('categories',this)"><span class="nav-icon">&#127914;</span>Ticket Categories</div>
+    <div class="nav-item" id="nav-attendees" onclick="goPage('attendees',this)"><span class="nav-icon">&#128100;</span>Attendees</div>
+    <div class="nav-item" id="nav-tickets" onclick="goPage('tickets',this)"><span class="nav-icon">&#127921;</span>Ticket Generation</div>
+    <div class="nav-item" id="nav-validate" onclick="goPage('validate',this)"><span class="nav-icon">&#10003;</span>Ticket Validation</div>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="btn btn-sm" style="width:100%" onclick="doLogout()">Sign Out</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div><div class="page-title">Dashboard</div><div class="page-sub">Overview of events, attendees, and tickets</div></div>
+  </div>
+  <div class="metrics" id="dash-metrics"></div>
+  <div class="chart-row" id="dash-charts"></div>
+  <div class="card-flush">
+    <div style="padding:0.875rem 1rem;font-weight:500;font-size:13px;border-bottom:0.5px solid var(--color-border-tertiary)">Upcoming events</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Audience</th><th>Status</th><th>Sold / Total</th></tr></thead><tbody id="dash-events"></tbody></table></div>
+  </div>
+  <div class="card-flush">
+    <div style="padding:0.875rem 1rem;font-weight:500;font-size:13px;border-bottom:0.5px solid var(--color-border-tertiary)">Recent tickets</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Attendee</th><th>Event</th><th>Payment</th><th>Validated</th></tr></thead><tbody id="dash-tickets"></tbody></table></div>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="page" id="page-events">
+  <div class="page-header">
+    <div><div class="page-title">Manage Events</div><div class="page-sub">Create, edit and manage university events</div></div>
+    <button class="btn btn-primary" onclick="openEventModal()">+ New Event</button>
+  </div>
+  <div class="search-row">
+    <input type="text" placeholder="Search events..." id="ev-search" oninput="renderEvents()">
+    <select onchange="renderEvents()" id="ev-filter" style="width:140px">
+      <option value="">All Status</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="ongoing">Ongoing</option>
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Event</th><th>Type</th><th>Date</th><th>Venue</th><th>Audience</th><th>Ticket</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="event-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- VENUES -->
+<div class="page" id="page-venues">
+  <div class="page-header">
+    <div><div class="page-title">Venues</div><div class="page-sub">University facilities for hosting events</div></div>
+    <button class="btn btn-primary" onclick="openVenueModal()">+ Add Venue</button>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Type</th><th>Building</th><th>Floor</th><th>Capacity</th><th>AV</th><th>Actions</th></tr></thead>
+    <tbody id="venue-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- ORGANIZATIONS -->
+<div class="page" id="page-orgs">
+  <div class="page-header">
+    <div><div class="page-title">Organizations</div><div class="page-sub">Event organizers and hosting bodies</div></div>
+    <button class="btn btn-primary" onclick="openOrgModal()">+ Add Organization</button>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Type</th><th>Adviser</th><th>Email</th><th>Phone</th><th>Accredited</th><th>Actions</th></tr></thead>
+    <tbody id="org-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- TICKET CATEGORIES -->
+<div class="page" id="page-categories">
+  <div class="page-header">
+    <div><div class="page-title">Ticket Categories</div><div class="page-sub">Manage audience-based ticket tiers per event</div></div>
+    <button class="btn btn-primary" onclick="openCatModal()">+ Add Category</button>
+  </div>
+  <div class="search-row">
+    <select id="cat-ev-filter" onchange="renderCategories()" style="width:260px">
+      <option value="">All Events</option>
+    </select>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Event</th><th>Category Name</th><th>Eligible</th><th>Price</th><th>Total Slots</th><th>Remaining</th><th>Sold</th><th>Actions</th></tr></thead>
+    <tbody id="cat-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- ATTENDEES -->
+<div class="page" id="page-attendees">
+  <div class="page-header">
+    <div><div class="page-title">Attendees</div><div class="page-sub">Register and manage event attendees</div></div>
+    <button class="btn btn-primary" onclick="openAttModal()">+ Register Attendee</button>
+  </div>
+  <div class="search-row">
+    <input type="text" placeholder="Search name or email..." id="att-search" oninput="renderAttendees()">
+    <select id="att-type-filter" onchange="renderAttendees()" style="width:140px">
+      <option value="">All Types</option>
+      <option value="student">Student</option>
+      <option value="employee">Employee</option>
+      <option value="alumni">Alumni</option>
+      <option value="guest">Guest</option>
+    </select>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>ID / Details</th><th>Gender</th><th>Registered</th><th>Actions</th></tr></thead>
+    <tbody id="att-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- TICKETS -->
+<div class="page" id="page-tickets">
+  <div class="page-header">
+    <div><div class="page-title">Ticket Generation</div><div class="page-sub">Issue UUID-based tickets with QR codes</div></div>
+    <button class="btn btn-primary" onclick="openTicketModal()">+ Generate Ticket</button>
+  </div>
+  <div class="search-row">
+    <input type="text" placeholder="Search code or attendee..." id="tk-search" oninput="renderTickets()">
+    <select id="tk-pay-filter" onchange="renderTickets()" style="width:140px">
+      <option value="">All Payment</option>
+      <option value="free">Free</option>
+      <option value="paid">Paid</option>
+      <option value="pending">Pending</option>
+    </select>
+  </div>
+  <div class="card-flush"><div class="tbl-wrap"><table>
+    <thead><tr><th>Ticket Code</th><th>Attendee</th><th>Event / Category</th><th>Payment</th><th>Validated</th><th>Actions</th></tr></thead>
+    <tbody id="ticket-tbody"></tbody>
+  </table></div></div>
+</div>
+
+<!-- VALIDATE -->
+<div class="page" id="page-validate">
+  <div class="page-header">
+    <div><div class="page-title">Ticket Validation</div><div class="page-sub">Scan or enter ticket code to validate entry</div></div>
+  </div>
+  <div style="max-width:520px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Enter ticket code</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="val-input" placeholder="e.g. TKT-SEED-0001 or UUID..." style="flex:1" onkeydown="if(event.key==='Enter')doValidate()">
+        <button class="btn btn-primary" onclick="doValidate()">Validate</button>
+        <button class="btn" onclick="clearValidate()">Clear</button>
       </div>
-      <div class="nav-item" data-screen="profile" onclick="navTo('profile',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
-        Teacher Profile
-      </div>
-      <div class="nav-item" data-screen="classes" onclick="navTo('classes',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        Class Information
-        <span class="nav-badge">4</span>
-      </div>
-      <div class="nav-item" data-screen="curriculum" onclick="navTo('curriculum',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-        Course Curriculum
-      </div>
-      <div class="nav-item" data-screen="settings" onclick="navTo('settings',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Settings
-      </div>
-    </nav>
-    <div class="sidebar-bottom">
-      <div class="nav-item" onclick="doLogout()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Log Out
-      </div>
+      <div class="val-success" id="val-ok"><div style="font-weight:500;margin-bottom:6px">&#10003; Ticket valid — entry granted</div><div id="val-ok-body"></div></div>
+      <div class="val-error" id="val-fail"><div style="font-weight:500;margin-bottom:4px">&#10007; Validation failed</div><div id="val-fail-body"></div></div>
+      <div class="val-warn" id="val-warn"><div style="font-weight:500;margin-bottom:4px">&#9888; Already validated</div><div id="val-warn-body"></div></div>
     </div>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      <div class="topbar-right">
-        <div style="font-size:13px;color:var(--gray-600)">S.Y. 2024–2025 · 2nd Semester</div>
-        <div class="avatar">MS</div>
-      </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:10px">Quick test — click any ticket</div>
+      <div id="val-quick-list"></div>
     </div>
+  </div>
+</div>
 
-    <div class="content">
-
-      <!-- DASHBOARD -->
-      <div class="screen active" id="screen-dashboard">
-        <div class="grid-4" style="margin-bottom:20px">
-          <div class="stat-card"><div class="stat-label">Subjects Handled</div><div class="stat-val">4</div><div class="stat-sub">This semester</div></div>
-          <div class="stat-card"><div class="stat-label">Total Students</div><div class="stat-val">128</div><div class="stat-sub">Enrolled</div></div>
-          <div class="stat-card"><div class="stat-label">Classes Today</div><div class="stat-val">3</div><div class="stat-sub">Wednesday</div></div>
-          <div class="stat-card"><div class="stat-label">Pending Grades</div><div class="stat-val">12</div><div class="stat-sub">Needs input</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Subjects Handled</div>
-          <div class="grid-2">
-            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
-              <div class="sc-code">MATH 10</div>
-              <h3>Mathematics — Grade 10</h3>
-              <p>32 students · Section Sampaguita</p>
-            </div>
-            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
-              <div class="sc-code">SCI 10</div>
-              <h3>Science — Grade 10</h3>
-              <p>30 students · Section Sampaguita</p>
-            </div>
-            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
-              <div class="sc-code">MATH 11</div>
-              <h3>Pre-Calculus — Grade 11</h3>
-              <p>35 students · STEM A</p>
-            </div>
-            <div class="subject-card" onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">
-              <div class="sc-code">STAT 12</div>
-              <h3>Statistics — Grade 12</h3>
-              <p>31 students · STEM B</p>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">This Week's Schedule</div>
-          <div class="schedule-row"><div class="schedule-day">Mon</div><div style="flex:1;font-size:13.5px;font-weight:600">Mathematics — Grade 10 (Sec. Sampaguita)</div><div style="font-size:12px;color:var(--gray-400)">7:30–9:00 AM · Room 201</div></div>
-          <div class="schedule-row"><div class="schedule-day">Tue</div><div style="flex:1;font-size:13.5px;font-weight:600">Science — Grade 10 (Sec. Sampaguita)</div><div style="font-size:12px;color:var(--gray-400)">10:00–11:30 AM · Lab 1</div></div>
-          <div class="schedule-row"><div class="schedule-day">Wed</div><div style="flex:1;font-size:13.5px;font-weight:600">Pre-Calculus — Grade 11 (STEM A)</div><div style="font-size:12px;color:var(--gray-400)">8:00–9:30 AM · Room 305</div></div>
-          <div class="schedule-row"><div class="schedule-day">Wed</div><div style="flex:1;font-size:13.5px;font-weight:600">Statistics — Grade 12 (STEM B)</div><div style="font-size:12px;color:var(--gray-400)">1:00–2:30 PM · Room 306</div></div>
-          <div class="schedule-row" style="border:none"><div class="schedule-day">Fri</div><div style="flex:1;font-size:13.5px;font-weight:600">Pre-Calculus — Grade 11 (STEM A)</div><div style="font-size:12px;color:var(--gray-400)">8:00–9:30 AM · Room 305</div></div>
-        </div>
-      </div>
-
-      <!-- TEACHER PROFILE -->
-      <div class="screen" id="screen-profile">
-        <div class="card">
-          <div class="section-header">
-            <div class="section-title">Teacher Profile</div>
-            <button class="btn btn-gold btn-sm" id="profileEditBtn" onclick="toggleProfileEdit()">Edit Profile</button>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:28px;margin-bottom:20px">
-            <div>
-              <div class="profile-pic-circle" onclick="alert('Click to upload photo')">MS</div>
-              <div style="text-align:center;font-size:11px;color:var(--gray-400);margin-top:6px">Change photo</div>
-            </div>
-            <div style="flex:1">
-              <div class="grid-2" id="profileView">
-                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Full Name</div><div style="font-size:15px;font-weight:600" id="vName">Maria Santos</div></div>
-                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Teacher ID</div><div style="font-size:15px;font-weight:600">TCH-2024-001</div></div>
-                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Email</div><div style="font-size:15px;font-weight:600" id="vEmail">m.santos@school.edu</div></div>
-                <div><div style="font-size:12px;color:var(--gray-400);margin-bottom:3px">Department</div><div style="font-size:15px;font-weight:600" id="vDept">Science & Mathematics</div></div>
-              </div>
-              <div class="grid-2" id="profileEditForm" style="display:none">
-                <div class="form-group"><label>Full Name</label><input type="text" id="eName" value="Maria Santos"/></div>
-                <div class="form-group"><label>Teacher ID</label><input type="text" value="TCH-2024-001" disabled style="background:var(--gray-50)"/></div>
-                <div class="form-group"><label>Email</label><input type="email" id="eEmail" value="m.santos@school.edu"/></div>
-                <div class="form-group"><label>Department</label><input type="text" id="eDept" value="Science & Mathematics"/></div>
-              </div>
-              <div id="profileSaveRow" style="display:none;margin-top:10px">
-                <button class="btn btn-primary btn-sm" onclick="saveProfile()">Save Changes</button>
-                <button class="btn btn-outline btn-sm" style="margin-left:8px" onclick="cancelProfileEdit()">Cancel</button>
-              </div>
-            </div>
-          </div>
-          <div style="border-top:1px solid var(--gray-100);padding-top:16px">
-            <div style="font-size:12.5px;font-weight:700;color:var(--gray-600);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.6px">Subjects Handled</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <span class="tag">Mathematics — Grade 10</span>
-              <span class="tag">Science — Grade 10</span>
-              <span class="tag">Pre-Calculus — Grade 11</span>
-              <span class="tag">Statistics — Grade 12</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CLASS INFORMATION -->
-      <div class="screen" id="screen-classes">
-        <div id="classesView">
-          <div class="section-header">
-            <div class="section-title">Class Information</div>
-            <button class="btn btn-primary btn-sm" onclick="openModal('addClassModal')">+ Add Class</button>
-          </div>
-          <div class="grid-2">
-            <div class="card" style="cursor:pointer" onmouseenter="this.style.boxShadow='0 4px 16px rgba(107,26,42,0.12)'" onmouseleave="this.style.boxShadow=''" onclick="openClassDetail('MATH10','Mathematics — Grade 10')">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between">
-                <div><div style="background:var(--maroon-pale);color:var(--maroon);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px">MATH 10</div><div style="font-size:15px;font-weight:700">Mathematics — Grade 10</div><div style="font-size:12px;color:var(--gray-400);margin-top:3px">Section Sampaguita · 32 students</div></div>
-                <div style="font-size:11px;background:var(--gold-pale);color:var(--gold-dark);padding:3px 8px;border-radius:6px;font-weight:700">Q2</div>
-              </div>
-              <div style="display:flex;gap:8px;margin-top:14px">
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">32</div><div style="font-size:11px;color:var(--gray-400)">Students</div></div>
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">4</div><div style="font-size:11px;color:var(--gray-400)">Quizzes</div></div>
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">3</div><div style="font-size:11px;color:var(--gray-400)">Activities</div></div>
-              </div>
-            </div>
-            <div class="card" style="cursor:pointer" onmouseenter="this.style.boxShadow='0 4px 16px rgba(107,26,42,0.12)'" onmouseleave="this.style.boxShadow=''" onclick="openClassDetail('SCI10','Science — Grade 10')">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between">
-                <div><div style="background:var(--maroon-pale);color:var(--maroon);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px">SCI 10</div><div style="font-size:15px;font-weight:700">Science — Grade 10</div><div style="font-size:12px;color:var(--gray-400);margin-top:3px">Section Sampaguita · 30 students</div></div>
-                <div style="font-size:11px;background:var(--gold-pale);color:var(--gold-dark);padding:3px 8px;border-radius:6px;font-weight:700">Q2</div>
-              </div>
-              <div style="display:flex;gap:8px;margin-top:14px">
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">30</div><div style="font-size:11px;color:var(--gray-400)">Students</div></div>
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">3</div><div style="font-size:11px;color:var(--gray-400)">Quizzes</div></div>
-                <div style="flex:1;text-align:center;background:var(--gray-50);border-radius:8px;padding:8px"><div style="font-size:18px;font-weight:700;color:var(--maroon)">4</div><div style="font-size:11px;color:var(--gray-400)">Activities</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CLASS DETAIL -->
-        <div id="classDetailView" style="display:none">
-          <div class="breadcrumb">
-            <span onclick="backToClasses()">Class Information</span>
-            <span style="color:var(--gray-200)">›</span>
-            <span id="classDetailName" style="cursor:default;color:var(--gray-600)">—</span>
-          </div>
-          <div class="tab-bar" id="classDetailTabs">
-            <div class="tab active" onclick="switchClassTab('students',this)">Students</div>
-            <div class="tab" onclick="switchClassTab('grades',this)">Grade Book</div>
-            <div class="tab" onclick="switchClassTab('attendance',this)">Attendance</div>
-          </div>
-
-          <div id="ctab-students">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-              <div class="search-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" placeholder="Search students…" oninput="renderStudents(this.value)"/>
-              </div>
-              <div class="toggle-view">
-                <div class="view-btn active" id="gridViewBtn" onclick="setView('grid')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-                <div class="view-btn" id="listViewBtn" onclick="setView('list')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>
-              </div>
-              <button class="btn btn-primary btn-sm" onclick="openModal('addStudentModal')">+ Add Student</button>
-            </div>
-            <div class="student-grid" id="studentGridView"></div>
-            <table id="studentListView" style="display:none">
-              <thead><tr><th>Name</th><th>Student ID</th><th>Final Grade</th><th>Actions</th></tr></thead>
-              <tbody id="studentListBody"></tbody>
-            </table>
-          </div>
-
-          <div id="ctab-grades" style="display:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-              <div style="font-size:13px;color:var(--gray-600)">
-                Input fields: <span style="background:#FFF0F0;color:#C62828;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700;border:1px solid #FFCCCC">red</span> &nbsp;
-                Computed: <span style="background:#FFF8E1;color:var(--gold-dark);padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700">yellow</span>
-              </div>
-              <div style="display:flex;gap:8px">
-                <button class="btn btn-outline btn-sm" onclick="addQuizColumn()">+ Quiz</button>
-                <button class="btn btn-outline btn-sm" onclick="addActivityColumn()">+ Activity</button>
-                <button class="btn btn-gold btn-sm" onclick="computeAllGrades()">Recompute All</button>
-              </div>
-            </div>
-            <div style="overflow-x:auto">
-              <table class="grade-table" id="gradeTable">
-                <thead id="gradeHead"></thead>
-                <tbody id="gradeTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div id="ctab-attendance" style="display:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-              <div style="font-size:13px;color:var(--gray-600)">Click a cell to toggle Present / Absent</div>
-              <button class="btn btn-primary btn-sm" onclick="addAttendanceDate()">+ Add Date</button>
-            </div>
-            <div style="overflow-x:auto">
-              <table id="attendanceTable">
-                <thead id="attendanceHead"></thead>
-                <tbody id="attendanceBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STUDENT PROFILE -->
-      <div class="screen" id="screen-student">
-        <div class="breadcrumb">
-          <span onclick="navTo('classes',document.querySelector('[data-screen=classes]'))">Class Information</span>
-          <span style="color:var(--gray-200)">›</span>
-          <span onclick="backToClassDetail()">Class Detail</span>
-          <span style="color:var(--gray-200)">›</span>
-          <span id="spBreadcrumb" style="color:var(--gray-600);cursor:default">Student</span>
-        </div>
-        <div style="display:flex;gap:24px;align-items:flex-start">
-          <div style="flex-shrink:0;text-align:center">
-            <div class="student-avatar" style="width:80px;height:80px;font-size:26px;margin:0 auto 10px" id="spAvatar">JD</div>
-            <div style="font-size:15px;font-weight:700;margin-bottom:3px" id="spName">—</div>
-            <div style="font-size:12px;color:var(--gray-400)" id="spId">—</div>
-          </div>
-          <div style="flex:1">
-            <div class="final-grade-banner" style="margin-bottom:16px">
-              <div>
-                <div style="font-size:11px;opacity:0.7;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">Final Grade</div>
-                <div class="grade-num" id="spFinalGrade">—</div>
-                <div style="font-size:12px;opacity:0.6;margin-top:4px">Class Performance × 70% + Exam × 30%</div>
-              </div>
-              <div style="text-align:right">
-                <div style="font-size:11px;opacity:0.7">Class Performance (70%)</div>
-                <div style="font-size:24px;font-weight:700;color:var(--gold-light);margin:2px 0" id="spClassPerf">—</div>
-                <div style="font-size:11px;opacity:0.7;margin-top:8px">Major Exam (30%)</div>
-                <div style="font-size:24px;font-weight:700;color:var(--gold-light);margin-top:2px" id="spExamScore">—</div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">Score Breakdown</div>
-              <table id="spTable">
-                <thead><tr><th>Component</th><th>Raw</th><th>Weight</th><th>Weighted</th></tr></thead>
-                <tbody id="spTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CURRICULUM -->
-      <div class="screen" id="screen-curriculum">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <div class="section-title">Course Curriculum</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="currLevel" style="width:auto" onchange="renderCurriculum()">
-              <option value="basic">Basic Education</option>
-              <option value="undergrad">Undergraduate</option>
-            </select>
-            <select id="currPeriod" style="width:auto" onchange="renderCurriculum()">
-              <option value="q1">Quarter 1</option>
-              <option value="q2">Quarter 2</option>
-              <option value="q3">Quarter 3</option>
-              <option value="q4">Quarter 4</option>
-            </select>
-            <button class="btn btn-primary btn-sm" onclick="openModal('addTopicModal')">+ Add Topic</button>
-          </div>
-        </div>
-        <div class="grid-2" id="curriculumGrid"></div>
-      </div>
-
-      <!-- SETTINGS -->
-      <div class="screen" id="screen-settings">
-        <div class="card">
-          <div class="card-title">Account Settings</div>
-          <div class="settings-row">
-            <div><div style="font-size:13.5px;font-weight:500">Email Notifications</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Receive updates about grades and submissions</div></div>
-            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row">
-            <div><div style="font-size:13.5px;font-weight:500">Two-Factor Authentication</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Extra security for your account</div></div>
-            <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
-          </div>
-          <div class="settings-row" style="border:none">
-            <div><div style="font-size:13.5px;font-weight:500">Auto-save Grade Book</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Save changes automatically every 30 seconds</div></div>
-            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Profile Settings</div>
-          <div class="grid-2">
-            <div class="form-group"><label>Display Name</label><input type="text" value="Ms. Maria Santos"/></div>
-            <div class="form-group"><label>Time Zone</label><select><option>Asia/Manila (UTC+8)</option><option>UTC</option></select></div>
-            <div class="form-group"><label>Academic Year</label><select><option>2024–2025</option><option>2023–2024</option></select></div>
-            <div class="form-group"><label>Grading Scale</label><select><option>Philippine DepEd (60–100)</option><option>Standard (0–100)</option></select></div>
-          </div>
-          <button class="btn btn-primary btn-sm">Save Settings</button>
-        </div>
-        <div class="card">
-          <div class="card-title" style="color:#8B2020">Danger Zone</div>
-          <div class="settings-row">
-            <div><div style="font-size:13.5px;font-weight:500">Reset Grade Book</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Clear all grade entries for the current period</div></div>
-            <button class="btn btn-danger btn-sm">Reset</button>
-          </div>
-          <div class="settings-row" style="border:none">
-            <div><div style="font-size:13.5px;font-weight:500">Log Out</div><div style="font-size:12px;color:var(--gray-400);margin-top:2px">Sign out of all devices</div></div>
-            <button class="btn btn-danger btn-sm" onclick="doLogout()">Log Out</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
+</main>
+</div>
 </div>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="addStudentModal">
+
+<!-- Event Modal -->
+<div class="modal-overlay" id="ev-modal">
   <div class="modal">
-    <div class="modal-title">Add Student</div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="newStudentName" placeholder="e.g. Ana Reyes"/></div>
-    <div class="form-group"><label>Student ID</label><input type="text" id="newStudentId" placeholder="STU-2024-XXX"/></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeModal('addStudentModal')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="addStudent()">Add Student</button>
+    <div class="modal-hd"><span class="modal-title" id="ev-modal-title">New Event</span><button class="modal-close" onclick="closeModal('ev-modal')">&#x2715;</button></div>
+    <div class="form-grid">
+      <div class="form-group span2"><label class="form-label">Event name *</label><input type="text" id="evm-name" placeholder="University Foundation Day Concert"></div>
+      <div class="form-group"><label class="form-label">Event type *</label><select id="evm-type"><option value="">Select...</option><option value="academic">Academic</option><option value="cultural">Cultural</option><option value="sports">Sports</option><option value="concert">Concert</option><option value="seminar">Seminar</option><option value="graduation">Graduation</option><option value="orientation">Orientation</option><option value="other">Other</option></select></div>
+      <div class="form-group"><label class="form-label">Date *</label><input type="date" id="evm-date"></div>
+      <div class="form-group"><label class="form-label">Start time *</label><input type="time" id="evm-start"></div>
+      <div class="form-group"><label class="form-label">End time *</label><input type="time" id="evm-end"></div>
+      <div class="form-group"><label class="form-label">Audience type</label><select id="evm-audience"><option value="open_to_all">Open to all</option><option value="student_only">Students only</option><option value="employee_only">Employees only</option><option value="alumni_only">Alumni only</option></select></div>
+      <div class="form-group"><label class="form-label">Requires ticket</label><select id="evm-requires"><option value="1">Yes (ticketed)</option><option value="0">No (free entry)</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select id="evm-status"><option value="upcoming">Upcoming</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
+      <div class="form-group"><label class="form-label">Venue *</label><select id="evm-venue"></select></div>
+      <div class="form-group"><label class="form-label">Organization *</label><select id="evm-org"></select></div>
+      <div class="form-group span2"><label class="form-label">Description</label><textarea id="evm-desc" rows="2" placeholder="Event details..."></textarea></div>
     </div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('ev-modal')">Cancel</button><button class="btn btn-primary" onclick="saveEvent()">Save Event</button></div>
   </div>
 </div>
-<div class="modal-overlay" id="editStudentModal">
-  <div class="modal">
-    <div class="modal-title">Edit Student</div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="editStudentName"/></div>
-    <div class="form-group"><label>Student ID</label><input type="text" id="editStudentId" disabled style="background:var(--gray-50)"/></div>
-    <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" onclick="removeStudent()">Remove</button>
-      <div style="flex:1"></div>
-      <button class="btn btn-outline btn-sm" onclick="closeModal('editStudentModal')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveEditStudent()">Save</button>
+
+<!-- Venue Modal -->
+<div class="modal-overlay" id="vn-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><span class="modal-title" id="vn-modal-title">Add Venue</span><button class="modal-close" onclick="closeModal('vn-modal')">&#x2715;</button></div>
+    <div class="form-grid">
+      <div class="form-group span2"><label class="form-label">Venue name *</label><input type="text" id="vnm-name" placeholder="University Gymnasium"></div>
+      <div class="form-group"><label class="form-label">Type *</label><select id="vnm-type"><option value="gymnasium">Gymnasium</option><option value="auditorium">Auditorium</option><option value="classroom">Classroom</option><option value="field">Field</option><option value="courtyard">Courtyard</option><option value="amphitheater">Amphitheater</option><option value="other">Other</option></select></div>
+      <div class="form-group"><label class="form-label">Capacity *</label><input type="number" id="vnm-cap" min="1" placeholder="500"></div>
+      <div class="form-group"><label class="form-label">Building</label><input type="text" id="vnm-bldg" placeholder="Main Campus"></div>
+      <div class="form-group"><label class="form-label">Floor level</label><input type="text" id="vnm-floor" placeholder="Ground Floor"></div>
+      <div class="form-group"><label class="form-label">AV system</label><select id="vnm-av"><option value="1">Yes</option><option value="0">No</option></select></div>
     </div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('vn-modal')">Cancel</button><button class="btn btn-primary" onclick="saveVenue()">Save Venue</button></div>
   </div>
 </div>
-<div class="modal-overlay" id="addClassModal">
-  <div class="modal">
-    <div class="modal-title">Add Class</div>
-    <div class="form-group"><label>Subject Code</label><input type="text" placeholder="e.g. MATH 10"/></div>
-    <div class="form-group"><label>Subject Name</label><input type="text" placeholder="e.g. Mathematics — Grade 10"/></div>
-    <div class="form-group"><label>Section</label><input type="text" placeholder="e.g. Section Sampaguita"/></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeModal('addClassModal')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="closeModal('addClassModal')">Add Class</button>
+
+<!-- Org Modal -->
+<div class="modal-overlay" id="org-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><span class="modal-title" id="org-modal-title">Add Organization</span><button class="modal-close" onclick="closeModal('org-modal')">&#x2715;</button></div>
+    <div class="form-grid">
+      <div class="form-group span2"><label class="form-label">Organization name *</label><input type="text" id="orgm-name" placeholder="Computer Science Society"></div>
+      <div class="form-group"><label class="form-label">Type *</label><select id="orgm-type"><option value="student_org">Student org</option><option value="alumni_org">Alumni org</option><option value="external">External</option><option value="university_office">University office</option></select></div>
+      <div class="form-group"><label class="form-label">Accredited</label><select id="orgm-acc"><option value="1">Yes</option><option value="0">No</option></select></div>
+      <div class="form-group"><label class="form-label">Adviser first name</label><input type="text" id="orgm-af" placeholder="Maria"></div>
+      <div class="form-group"><label class="form-label">Adviser last name</label><input type="text" id="orgm-al" placeholder="Santos"></div>
+      <div class="form-group span2"><label class="form-label">Contact email *</label><input type="email" id="orgm-email" placeholder="org@university.edu.ph"></div>
+      <div class="form-group span2"><label class="form-label">Contact phone</label><input type="text" id="orgm-phone" placeholder="+63917..."></div>
     </div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('org-modal')">Cancel</button><button class="btn btn-primary" onclick="saveOrg()">Save Organization</button></div>
   </div>
 </div>
-<div class="modal-overlay" id="addTopicModal">
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="cat-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd"><span class="modal-title" id="cat-modal-title">Add Ticket Category</span><button class="modal-close" onclick="closeModal('cat-modal')">&#x2715;</button></div>
+    <div class="form-grid">
+      <div class="form-group span2"><label class="form-label">Event *</label><select id="catm-event"></select></div>
+      <div class="form-group span2"><label class="form-label">Category name *</label><input type="text" id="catm-name" placeholder="e.g. Student Ticket"></div>
+      <div class="form-group"><label class="form-label">Eligible type *</label><select id="catm-elig"><option value="all">All</option><option value="student">Student</option><option value="employee">Employee</option><option value="alumni">Alumni</option><option value="guest">Guest</option></select></div>
+      <div class="form-group"><label class="form-label">Price (PHP) *</label><input type="number" id="catm-price" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="form-group span2"><label class="form-label">Total slots *</label><input type="number" id="catm-slots" min="1" placeholder="100"></div>
+    </div>
+    <div id="catm-err" class="err-msg"></div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('cat-modal')">Cancel</button><button class="btn btn-primary" onclick="saveCat()">Save Category</button></div>
+  </div>
+</div>
+
+<!-- Attendee Modal -->
+<div class="modal-overlay" id="att-modal">
   <div class="modal">
-    <div class="modal-title">Add Topic / Lesson</div>
-    <div class="form-group"><label>Topic Title</label><input type="text" id="newTopicTitle" placeholder="e.g. Quadratic Equations"/></div>
-    <div class="form-group"><label>Subject</label><select><option>Mathematics — Grade 10</option><option>Science — Grade 10</option><option>Pre-Calculus — Grade 11</option></select></div>
-    <div class="form-group"><label>Week / Duration</label><input type="text" placeholder="e.g. Week 3–4"/></div>
-    <div class="form-group"><label>Learning Objectives</label><textarea rows="3" placeholder="Students will be able to…"></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeModal('addTopicModal')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="addTopic()">Add Topic</button>
+    <div class="modal-hd"><span class="modal-title" id="att-modal-title">Register Attendee</span><button class="modal-close" onclick="closeModal('att-modal')">&#x2715;</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">First name *</label><input type="text" id="attm-fn" placeholder="Carlos"></div>
+      <div class="form-group"><label class="form-label">Last name *</label><input type="text" id="attm-ln" placeholder="Mendoza"></div>
+      <div class="form-group span2"><label class="form-label">Email *</label><input type="email" id="attm-email" placeholder="attendee@university.edu.ph"></div>
+      <div class="form-group"><label class="form-label">Phone</label><input type="text" id="attm-phone" placeholder="+63917..."></div>
+      <div class="form-group"><label class="form-label">Birth date *</label><input type="date" id="attm-bdate"></div>
+      <div class="form-group"><label class="form-label">Gender *</label><select id="attm-gender"><option value="male">Male</option><option value="female">Female</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select></div>
+      <div class="form-group"><label class="form-label">Attendee type *</label><select id="attm-type" onchange="toggleSubtype()"><option value="student">Student</option><option value="employee">Employee</option><option value="alumni">Alumni</option><option value="guest">Guest</option></select></div>
+    </div>
+    <div id="sub-student" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div class="form-group"><label class="form-label">Student ID</label><input type="text" id="attm-sid" placeholder="2024-10001"></div>
+      <div class="form-group"><label class="form-label">Year level</label><input type="number" id="attm-yr" min="1" max="5" placeholder="1-5"></div>
+      <div class="form-group"><label class="form-label">Program</label><input type="text" id="attm-prog" placeholder="BS Computer Science"></div>
+      <div class="form-group"><label class="form-label">Department</label><input type="text" id="attm-dept" placeholder="CCS"></div>
+    </div>
+    <div id="sub-employee" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div class="form-group"><label class="form-label">Employee ID</label><input type="text" id="attm-eid" placeholder="EMP-0001"></div>
+      <div class="form-group"><label class="form-label">Job title</label><input type="text" id="attm-job" placeholder="Department Chair"></div>
+    </div>
+    <div id="sub-alumni" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div class="form-group"><label class="form-label">Alumni ID</label><input type="text" id="attm-alid" placeholder="ALM-0001"></div>
+      <div class="form-group"><label class="form-label">Graduation year</label><input type="number" id="attm-grad" placeholder="2020"></div>
+    </div>
+    <div id="sub-guest" style="display:none;margin-top:8px">
+      <div class="form-group"><label class="form-label">Guest ID</label><input type="text" id="attm-gid" placeholder="GST-0001"></div>
+    </div>
+    <div id="attm-err" class="err-msg"></div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('att-modal')">Cancel</button><button class="btn btn-primary" onclick="saveAtt()">Register</button></div>
+  </div>
+</div>
+
+<!-- Ticket Generate Modal -->
+<div class="modal-overlay" id="tk-modal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-hd"><span class="modal-title">Generate Ticket</span><button class="modal-close" onclick="closeModal('tk-modal')">&#x2715;</button></div>
+    <div class="form-group" style="margin-bottom:10px"><label class="form-label">Event *</label><select id="tkm-event" onchange="loadTkCats()"><option value="">-- Select event --</option></select></div>
+    <div class="form-group" style="margin-bottom:10px"><label class="form-label">Ticket category *</label><select id="tkm-cat" onchange="showTkInfo()"><option value="">-- Select category --</option></select></div>
+    <div class="form-group" style="margin-bottom:4px"><label class="form-label">Attendee *</label><select id="tkm-att" onchange="showTkInfo()"><option value="">-- Select attendee --</option></select></div>
+    <div id="tkm-info" class="info-msg"></div>
+    <div id="tkm-err" class="err-msg"></div>
+    <div class="modal-ft"><button class="btn" onclick="closeModal('tk-modal')">Cancel</button><button class="btn btn-primary" onclick="genTicket()">Generate &amp; Issue Ticket</button></div>
+  </div>
+</div>
+
+<!-- Ticket View Modal -->
+<div class="modal-overlay" id="tv-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><span class="modal-title">Ticket</span><button class="modal-close" onclick="closeModal('tv-modal')">&#x2715;</button></div>
+    <div id="tv-content"></div>
+    <div class="modal-ft">
+      <button class="btn" onclick="closeModal('tv-modal')">Close</button>
+      <button class="btn btn-primary" onclick="printTicket()">Print Ticket</button>
     </div>
   </div>
 </div>
 
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const COLORS=['#6B1A2A','#8B2A3F','#5C4A1A','#1A4A5C','#2A5C1A','#4A1A5C','#1A3A5C','#5C2A1A'];
-let currentStudentIdx=-1;
-let students=[
-  {name:'Juan dela Cruz',id:'STU-2024-001'},
-  {name:'Ana Reyes',id:'STU-2024-002'},
-  {name:'Carlo Santos',id:'STU-2024-003'},
-  {name:'Maria Garcia',id:'STU-2024-004'},
-  {name:'Pedro Lim',id:'STU-2024-005'},
-  {name:'Rosa Aquino',id:'STU-2024-006'},
-  {name:'Jose Mendoza',id:'STU-2024-007'},
-  {name:'Liza Cruz',id:'STU-2024-008'},
-];
-let gradeData={};
-let attDates=['Jan 8','Jan 10','Jan 13','Jan 15','Jan 17'];
-let attData={};
-let quizCols=['QE1','QE2','QE3','QE4'];
-let actCols=['RA1','RA2','RA3'];
-let projCols=['P1','P2'];
-let currTopics=[
-  {title:'Patterns and Sequences',week:'Week 1–2'},
-  {title:'Polynomials & Polynomial Equations',week:'Week 3–4'},
-  {title:'Polynomial Functions',week:'Week 5–6'},
-  {title:'Circles & Tangent Lines',week:'Week 7–8'},
-  {title:'Plane Coordinate Geometry',week:'Week 9–10'},
-];
+const USERS={admin:{pass:'admin123',name:'Admin User',role:'Administrator'}};
+let session=null;
+let viewingTicketId=null;
 
-function initials(name){return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
-function color(idx){return COLORS[idx%COLORS.length];}
-function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
-function rand(lo,hi){return Math.floor(Math.random()*(hi-lo+1))+lo;}
+let DB={
+  venues:[
+    {id:1,name:'University Gymnasium',type:'gymnasium',building:'Main Campus',floor:'Ground Floor',capacity:3000,av:1},
+    {id:2,name:'University Quadrangle',type:'field',building:'Main Campus',floor:'Outdoor',capacity:5000,av:0},
+    {id:3,name:'Rizal Hall Auditorium',type:'auditorium',building:'Rizal Hall',floor:'2nd Floor',capacity:800,av:1},
+    {id:4,name:'College of Engineering Room',type:'classroom',building:'Engineering Bldg',floor:'3rd Floor',capacity:120,av:1},
+    {id:5,name:'College Amphitheater',type:'amphitheater',building:'Arts & Sciences Bldg',floor:'Ground Floor',capacity:600,av:1}
+  ],
+  orgs:[
+    {id:1,name:'Supreme Student Government',type:'student_org',af:'Maria',al:'Santos',email:'ssg@university.edu.ph',phone:'+639171234001',acc:1},
+    {id:2,name:'Computer Science Society',type:'student_org',af:'Juan',al:'dela Cruz',email:'css@university.edu.ph',phone:'+639171234002',acc:1},
+    {id:3,name:'University Alumni Association',type:'alumni_org',af:'',al:'',email:'alumni@university.edu.ph',phone:'+639171234003',acc:1},
+    {id:4,name:'Office of Student Affairs',type:'university_office',af:'Ana',al:'Reyes',email:'osa@university.edu.ph',phone:'+639171234004',acc:1},
+    {id:5,name:'SoundWave Events (External)',type:'external',af:'',al:'',email:'booking@soundwaveevents.com',phone:'+639171234005',acc:0}
+  ],
+  events:[
+    {id:1,name:'University Foundation Day Concert',type:'concert',date:'2026-05-15',start:'18:00',end:'22:00',desc:'Annual concert for university founding anniversary.',audience:'open_to_all',ticket:1,status:'upcoming',venue_id:1,org_id:5},
+    {id:2,name:'CS Acquaintance Party',type:'cultural',date:'2026-05-08',start:'15:00',end:'20:00',desc:'Welcome party for new CS students.',audience:'student_only',ticket:1,status:'upcoming',venue_id:5,org_id:2},
+    {id:3,name:'Alumni Homecoming 2026',type:'cultural',date:'2026-06-20',start:'09:00',end:'18:00',desc:'Annual alumni reunion event.',audience:'alumni_only',ticket:1,status:'upcoming',venue_id:2,org_id:3},
+    {id:4,name:'Leadership & Governance Seminar',type:'seminar',date:'2026-04-28',start:'08:00',end:'17:00',desc:'Seminar for SSG officers.',audience:'student_only',ticket:1,status:'upcoming',venue_id:3,org_id:1},
+    {id:5,name:'Intramural Opening Ceremony',type:'sports',date:'2026-05-05',start:'07:00',end:'12:00',desc:'Opening ceremony for annual intramurals.',audience:'open_to_all',ticket:0,status:'upcoming',venue_id:2,org_id:4}
+  ],
+  cats:[
+    {id:1,event_id:1,name:'Student Ticket',elig:'student',price:50,total:1500,remaining:1499},
+    {id:2,event_id:1,name:'Employee Ticket',elig:'employee',price:50,total:300,remaining:299},
+    {id:3,event_id:1,name:'Alumni Ticket',elig:'alumni',price:80,total:500,remaining:499},
+    {id:4,event_id:1,name:'Guest Ticket',elig:'guest',price:150,total:500,remaining:499},
+    {id:5,event_id:2,name:'CS Student',elig:'student',price:80,total:400,remaining:399},
+    {id:6,event_id:3,name:'Alumni Pass',elig:'alumni',price:0,total:1000,remaining:999},
+    {id:7,event_id:4,name:'Student Leader',elig:'student',price:0,total:100,remaining:99},
+    {id:8,event_id:4,name:'Faculty Adviser',elig:'employee',price:0,total:30,remaining:29}
+  ],
+  attendees:[
+    {id:1,fn:'Carlos',ln:'Mendoza',email:'carlos.mendoza@university.edu.ph',phone:'+639171110001',gender:'male',bdate:'2004-03-15',type:'student',reg:'2026-04-01',sid:'2021-10001',prog:'BS Computer Science',yr:3,dept:'CCS',eid:null,job:null,alid:null,grad:null,gid:null},
+    {id:2,fn:'Liza',ln:'Quiambao',email:'liza.quiambao@university.edu.ph',phone:'+639171110002',gender:'female',bdate:'2003-07-22',type:'student',reg:'2026-04-01',sid:'2020-10045',prog:'BS Information Technology',yr:4,dept:'CCS',eid:null,job:null,alid:null,grad:null,gid:null},
+    {id:3,fn:'Ramon',ln:'Villanueva',email:'ramon.v@university.edu.ph',phone:'+639171110003',gender:'male',bdate:'2005-01-09',type:'student',reg:'2026-04-01',sid:'2022-20031',prog:'BS Business Administration',yr:2,dept:'CBA',eid:null,job:null,alid:null,grad:null,gid:null},
+    {id:4,fn:'Patricia',ln:'Torres',email:'patricia.torres@university.edu.ph',phone:'+639171110004',gender:'female',bdate:'1980-11-30',type:'employee',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:'EMP-0051',job:'Department Chair',alid:null,grad:null,gid:null},
+    {id:5,fn:'Miguel',ln:'Aguilar',email:'miguel.aguilar@university.edu.ph',phone:'+639171110005',gender:'male',bdate:'1985-06-14',type:'employee',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:'EMP-0089',job:'Guidance Counselor',alid:null,grad:null,gid:null},
+    {id:6,fn:'Christine',ln:'Tan',email:'christine.tan@gmail.com',phone:'+639171110006',gender:'female',bdate:'1998-09-03',type:'alumni',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:null,job:null,alid:'ALM-0021',grad:2021,gid:null},
+    {id:7,fn:'Andre',ln:'Bautista',email:'andre.bautista@gmail.com',phone:'+639171110007',gender:'male',bdate:'1996-04-17',type:'alumni',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:null,job:null,alid:'ALM-0019',grad:2019,gid:null},
+    {id:8,fn:'Maria',ln:'Cruz',email:'maria.cruz@techcorp.com',phone:'+639171110008',gender:'female',bdate:'1990-12-05',type:'guest',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:null,job:null,alid:null,grad:null,gid:'GST-0001'},
+    {id:9,fn:'James',ln:'Holloway',email:'j.holloway@ngo.org',phone:'+639171110009',gender:'prefer_not_to_say',bdate:'1988-08-21',type:'guest',reg:'2026-04-01',sid:null,prog:null,yr:null,dept:null,eid:null,job:null,alid:null,grad:null,gid:'GST-0002'}
+  ],
+  tickets:[
+    {id:1,code:'TKT-SEED-0001',date:'2026-04-01 10:00:00',validated:0,val_at:null,pay:'paid',cat_id:1,att_id:1},
+    {id:2,code:'TKT-SEED-0002',date:'2026-04-01 10:05:00',validated:0,val_at:null,pay:'paid',cat_id:2,att_id:4},
+    {id:3,code:'TKT-SEED-0003',date:'2026-04-01 10:10:00',validated:0,val_at:null,pay:'paid',cat_id:3,att_id:6},
+    {id:4,code:'TKT-SEED-0004',date:'2026-04-01 10:15:00',validated:0,val_at:null,pay:'paid',cat_id:4,att_id:8},
+    {id:5,code:'TKT-SEED-0005',date:'2026-04-01 10:20:00',validated:0,val_at:null,pay:'paid',cat_id:5,att_id:2},
+    {id:6,code:'TKT-SEED-0006',date:'2026-04-01 10:25:00',validated:1,val_at:'2026-04-10 09:15:22',pay:'free',cat_id:6,att_id:7},
+    {id:7,code:'TKT-SEED-0007',date:'2026-04-01 10:30:00',validated:0,val_at:null,pay:'free',cat_id:7,att_id:3}
+  ],
+  nxt:{venue:6,org:6,event:6,cat:9,att:10,ticket:8}
+};
 
-function initGradeData(){
-  students.forEach(s=>{
-    if(!gradeData[s.id]){
-      gradeData[s.id]={
-        att:rand(17,20),part:rand(78,98),
-        qe:quizCols.map(()=>rand(72,98)),
-        ra:actCols.map(()=>rand(74,98)),
-        p:projCols.map(()=>rand(78,98)),
-        exam:rand(72,98)
-      };
-    }
-    if(!attData[s.id]){attData[s.id]={};attDates.forEach(d=>{attData[s.id][d]=Math.random()>0.12?'P':'A';});}
-  });
+function uuid(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&0x3|0x8)).toString(16)});}
+function now(){return new Date().toISOString().replace('T',' ').substring(0,19);}
+function fv(id){return(document.getElementById(id)||{}).value||'';}
+function gv(id,val){const el=document.getElementById(id);if(el)el.value=val===null||val===undefined?'':val;}
+function getV(id){return DB.venues.find(x=>x.id==id)||{};}
+function getO(id){return DB.orgs.find(x=>x.id==id)||{};}
+function getE(id){return DB.events.find(x=>x.id==id)||{};}
+function getC(id){return DB.cats.find(x=>x.id==id)||{};}
+function getA(id){return DB.attendees.find(x=>x.id==id)||{};}
+
+const typeBadge={student:'b-blue',employee:'b-amber',alumni:'b-purple',guest:'b-gray',open_to_all:'b-teal',student_only:'b-blue',employee_only:'b-amber',alumni_only:'b-purple'};
+const payBadge={free:'b-green',paid:'b-blue',pending:'b-amber',refunded:'b-red'};
+const stBadge={upcoming:'b-blue',ongoing:'b-green',completed:'b-gray',cancelled:'b-red'};
+
+function badge(cls,txt){return `<span class="badge ${cls}">${txt.replace(/_/g,' ')}</span>`;}
+
+function doLogin(){
+  const u=fv('login-user').trim(),p=fv('login-pass');
+  if(USERS[u]&&USERS[u].pass===p){
+    session={user:u,...USERS[u]};
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-screen').style.display='block';
+    document.getElementById('user-name').textContent=session.name;
+    document.getElementById('user-avatar').textContent=session.name.charAt(0).toUpperCase();
+    document.getElementById('login-err').style.display='none';
+    renderAll();
+  } else {
+    document.getElementById('login-err').style.display='block';
+  }
 }
-function computeFinal(d){
-  const qA=avg(d.qe||[]),raA=avg(d.ra||[]),pA=avg(d.p||[]);
-  const cp=(d.part||0)*0.1+qA*0.25+raA*0.25+pA*0.4;
-  const final=cp*0.7+(d.exam||0)*0.3;
-  return{cp:+cp.toFixed(1),exam:d.exam||0,final:+final.toFixed(1)};
+
+function doLogout(){
+  session=null;
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
 }
 
-function navTo(screen,el){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+screen).classList.add('active');
+function goPage(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',profile:'Teacher Profile',classes:'Class Information',curriculum:'Course Curriculum',settings:'Settings',student:'Student Profile'};
-  document.getElementById('topbarTitle').textContent=titles[screen]||'';
-  if(screen==='curriculum')renderCurriculum();
+  document.getElementById('page-'+pg).classList.add('active');
+  if(el) el.classList.add('active');
+  else{const ni=document.getElementById('nav-'+pg);if(ni)ni.classList.add('active');}
+  if(pg==='dashboard')renderDash();
+  if(pg==='validate')renderValQuick();
+  if(pg==='categories')populateCatEvFilter();
 }
-function backToClasses(){document.getElementById('classesView').style.display='';document.getElementById('classDetailView').style.display='none';}
-function backToClassDetail(){navTo('classes',document.querySelector('[data-screen=classes]'));setTimeout(()=>{document.getElementById('classesView').style.display='none';document.getElementById('classDetailView').style.display='block';},50);}
 
-function openClassDetail(code,name){
-  document.getElementById('classesView').style.display='none';
-  document.getElementById('classDetailView').style.display='block';
-  document.getElementById('classDetailName').textContent=name||code;
-  initGradeData();
-  renderStudents();
-  renderGradeTable();
-  renderAttendance();
-  switchClassTab('students',document.querySelector('#classDetailTabs .tab'));
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+
+function renderAll(){renderDash();renderEvents();renderVenues();renderOrgs();renderCategories();renderAttendees();renderTickets();}
+
+function renderDash(){
+  const total=DB.events.length,upcoming=DB.events.filter(e=>e.status==='upcoming').length;
+  const totalTk=DB.tickets.length,val=DB.tickets.filter(t=>t.validated).length;
+  const revenue=DB.tickets.reduce((s,t)=>{const c=getC(t.cat_id);return s+(c.price||0);},0);
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val">${total}</div><div class="metric-label">Total events</div></div>
+    <div class="metric"><div class="metric-val">${upcoming}</div><div class="metric-label">Upcoming</div></div>
+    <div class="metric"><div class="metric-val">${DB.attendees.length}</div><div class="metric-label">Attendees</div></div>
+    <div class="metric"><div class="metric-val">${totalTk}</div><div class="metric-label">Tickets issued</div></div>
+    <div class="metric"><div class="metric-val">${val}</div><div class="metric-label">Validated</div></div>
+    <div class="metric"><div class="metric-val">&#8369;${revenue.toLocaleString()}</div><div class="metric-label">Revenue</div></div>
+  `;
+  renderDashCharts();
+  const evRows=DB.events.slice(0,5).map(e=>{
+    const v=getV(e.venue_id),cats=DB.cats.filter(c=>c.event_id===e.id);
+    const sold=cats.reduce((s,c)=>s+(c.total-c.remaining),0),tot=cats.reduce((s,c)=>s+c.total,0);
+    return `<tr><td>${e.name}</td><td>${e.date}</td><td>${v.name||'-'}</td><td>${badge(typeBadge[e.audience]||'b-gray',e.audience)}</td><td>${badge(stBadge[e.status]||'b-gray',e.status)}</td><td>${sold} / ${tot}</td></tr>`;
+  }).join('');
+  document.getElementById('dash-events').innerHTML=evRows||'<tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--color-text-secondary)">No events</td></tr>';
+  const tkRows=DB.tickets.slice(-5).reverse().map(t=>{
+    const a=getA(t.att_id),c=getC(t.cat_id),e=getE(c.event_id);
+    return `<tr><td><code style="font-size:11px">${t.code.substring(0,20)}${t.code.length>20?'...':''}</code></td><td>${a.fn} ${a.ln}</td><td style="font-size:12px">${e.name||'-'}</td><td>${badge(payBadge[t.pay]||'b-gray',t.pay)}</td><td>${t.validated?badge('b-green','Yes'):badge('b-gray','No')}</td></tr>`;
+  }).join('');
+  document.getElementById('dash-tickets').innerHTML=tkRows||'<tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--color-text-secondary)">No tickets</td></tr>';
 }
-function switchClassTab(tab,el){
-  ['students','grades','attendance'].forEach(t=>{document.getElementById('ctab-'+t).style.display='none';});
-  document.getElementById('ctab-'+tab).style.display='block';
-  document.querySelectorAll('#classDetailTabs .tab').forEach(t=>t.classList.remove('active'));
-  if(el)el.classList.add('active');
+
+function renderDashCharts(){
+  const evByType={};
+  DB.events.forEach(e=>{evByType[e.type]=(evByType[e.type]||0)+1;});
+  const attByType={student:0,employee:0,alumni:0,guest:0};
+  DB.attendees.forEach(a=>{attByType[a.type]=(attByType[a.type]||0)+1;});
+
+  const colors={academic:'#378ADD',cultural:'#639922',sports:'#BA7517',concert:'#7F77DD',seminar:'#1D9E75',graduation:'#D85A30',orientation:'#D4537E',other:'#888780'};
+  const aColors={student:'#378ADD',employee:'#BA7517',alumni:'#7F77DD',guest:'#888780'};
+
+  const maxEv=Math.max(...Object.values(evByType),1);
+  const barRows=Object.entries(evByType).map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${k}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/maxEv*100)}%;background:${colors[k]||'#888780'}"></div></div>
+      <div class="bar-val">${v}</div>
+    </div>`).join('');
+
+  const total=DB.attendees.length||1;
+  const seg=Object.entries(attByType).map(([k,v])=>({k,v,pct:Math.round(v/total*100),col:aColors[k]}));
+  let offset=0;
+  const arcs=seg.map(s=>{
+    const start=offset,sweep=s.v/total*360;
+    offset+=sweep;
+    return{...s,start,sweep};
+  });
+  function polarToXY(cx,cy,r,deg){const rad=(deg-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};}
+  function arc(cx,cy,r,startDeg,sweepDeg){
+    if(sweepDeg>=360) sweepDeg=359.99;
+    const s=polarToXY(cx,cy,r,startDeg),e=polarToXY(cx,cy,r,startDeg+sweepDeg);
+    const large=sweepDeg>180?1:0;
+    return `M ${cx} ${cy} L ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y} Z`;
+  }
+  const svgPaths=arcs.filter(a=>a.sweep>0).map(a=>`<path d="${arc(50,50,45,a.start,a.sweep)}" fill="${a.col}" opacity="0.9"/>`).join('');
+  const legend=seg.map(s=>`<div style="display:flex;align-items:center"><span class="legend-dot" style="background:${s.col}"></span><span style="color:var(--color-text-secondary)">${s.k}: <b style="font-weight:500">${s.v}</b></span></div>`).join('');
+
+  document.getElementById('dash-charts').innerHTML=`
+    <div class="chart-box">
+      <div class="chart-title">Events by type</div>
+      ${barRows||'<p style="font-size:12px;color:var(--color-text-secondary)">No data</p>'}
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Attendees by type</div>
+      <div class="donut-wrap">
+        <svg viewBox="0 0 100 100" style="width:90px;height:90px;flex-shrink:0">${svgPaths}<circle cx="50" cy="50" r="22" fill="var(--color-background-primary)"/><text x="50" y="53" text-anchor="middle" font-size="12" font-weight="500" fill="var(--color-text-primary)">${total}</text></svg>
+        <div class="donut-legend">${legend}</div>
+      </div>
+    </div>
+  `;
 }
-function setView(v){
-  if(v==='grid'){document.getElementById('studentGridView').style.display='grid';document.getElementById('studentListView').style.display='none';document.getElementById('gridViewBtn').classList.add('active');document.getElementById('listViewBtn').classList.remove('active');}
-  else{document.getElementById('studentGridView').style.display='none';document.getElementById('studentListView').style.display='table';document.getElementById('gridViewBtn').classList.remove('active');document.getElementById('listViewBtn').classList.add('active');renderStudentList();}
+
+function renderEvents(){
+  const q=fv('ev-search').toLowerCase(),f=fv('ev-filter');
+  const rows=DB.events.filter(e=>{
+    const vm=!q||(e.name+getV(e.venue_id).name+getO(e.org_id).name).toLowerCase().includes(q);
+    return vm&&(!f||e.status===f);
+  }).map(e=>{
+    const v=getV(e.venue_id),o=getO(e.org_id);
+    return `<tr>
+      <td><div style="font-weight:500">${e.name}</div><div style="font-size:11px;color:var(--color-text-secondary)">${o.name||''}</div></td>
+      <td>${badge('b-gray',e.type)}</td>
+      <td>${e.date}</td>
+      <td>${v.name||'-'}</td>
+      <td>${badge(typeBadge[e.audience]||'b-gray',e.audience)}</td>
+      <td>${e.ticket?badge('b-blue','Ticketed'):badge('b-gray','Free entry')}</td>
+      <td>${badge(stBadge[e.status]||'b-gray',e.status)}</td>
+      <td class="actions">
+        <button class="btn btn-sm" onclick="openEventModal(${e.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="delEvent(${e.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('event-tbody').innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--color-text-secondary)">No events found</td></tr>';
 }
-function renderStudents(filter=''){
-  const f=filter.toLowerCase();
-  const list=students.filter(s=>!f||s.name.toLowerCase().includes(f)||s.id.toLowerCase().includes(f));
-  document.getElementById('studentGridView').innerHTML=list.map((s,i)=>{
-    const gi=students.indexOf(s);
-    const ini=initials(s.name);const col=color(gi);
-    return`<div class="student-card-grid" onclick="openStudentProfile(${gi})">
-      <div class="student-avatar" style="background:${col}">${ini}</div>
-      <div style="font-size:13px;font-weight:600;margin-bottom:2px">${s.name}</div>
-      <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px">${s.id}</div>
-      <div style="display:flex;gap:4px;justify-content:center">
-        <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 8px" onclick="event.stopPropagation();openEditStudent(${gi})">Edit</button>
-        <button class="btn btn-primary btn-sm" style="font-size:11px;padding:3px 8px" onclick="event.stopPropagation();openStudentProfile(${gi})">View</button>
+
+function renderVenues(){
+  const rows=DB.venues.map(v=>`<tr>
+    <td style="font-weight:500">${v.name}</td>
+    <td>${badge('b-gray',v.type)}</td>
+    <td>${v.building||'-'}</td>
+    <td>${v.floor||'-'}</td>
+    <td>${v.capacity.toLocaleString()}</td>
+    <td>${v.av?badge('b-green','Yes'):badge('b-gray','No')}</td>
+    <td class="actions">
+      <button class="btn btn-sm" onclick="openVenueModal(${v.id})">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="delVenue(${v.id})">Del</button>
+    </td>
+  </tr>`).join('');
+  document.getElementById('venue-tbody').innerHTML=rows;
+}
+
+function renderOrgs(){
+  const rows=DB.orgs.map(o=>`<tr>
+    <td style="font-weight:500">${o.name}</td>
+    <td>${badge('b-gray',o.type.replace(/_/g,' '))}</td>
+    <td style="font-size:12px">${o.af&&o.al?o.af+' '+o.al:'-'}</td>
+    <td style="font-size:12px">${o.email}</td>
+    <td style="font-size:12px">${o.phone||'-'}</td>
+    <td>${o.acc?badge('b-green','Yes'):badge('b-red','No')}</td>
+    <td class="actions">
+      <button class="btn btn-sm" onclick="openOrgModal(${o.id})">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="delOrg(${o.id})">Del</button>
+    </td>
+  </tr>`).join('');
+  document.getElementById('org-tbody').innerHTML=rows;
+}
+
+function populateCatEvFilter(){
+  const sel=document.getElementById('cat-ev-filter');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">All Events</option>'+DB.events.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  sel.value=cur;
+}
+
+function renderCategories(){
+  populateCatEvFilter();
+  const f=fv('cat-ev-filter');
+  const rows=DB.cats.filter(c=>!f||c.event_id==f).map(c=>{
+    const e=getE(c.event_id);const sold=c.total-c.remaining;
+    const pct=c.total>0?Math.round(sold/c.total*100):0;
+    return `<tr>
+      <td style="font-size:12px">${e.name||'-'}</td>
+      <td style="font-weight:500">${c.name}</td>
+      <td>${badge(typeBadge[c.elig]||'b-gray',c.elig)}</td>
+      <td>${c.price>0?'&#8369;'+c.price.toFixed(2):badge('b-green','Free')}</td>
+      <td>${c.total}</td>
+      <td>${c.remaining}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="width:60px;height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#378ADD;border-radius:4px"></div></div><span style="font-size:11px">${sold}</span></div></td>
+      <td class="actions">
+        <button class="btn btn-sm" onclick="openCatModal(${c.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="delCat(${c.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cat-tbody').innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--color-text-secondary)">No categories</td></tr>';
+}
+
+function renderAttendees(){
+  const q=fv('att-search').toLowerCase(),f=fv('att-type-filter');
+  const rows=DB.attendees.filter(a=>{
+    const m=!q||(a.fn+' '+a.ln+a.email).toLowerCase().includes(q);
+    return m&&(!f||a.type===f);
+  }).map(a=>{
+    let detail='-';
+    if(a.type==='student') detail=`${a.sid||''} ${a.prog?'· '+a.prog:''}`.trim()||'-';
+    if(a.type==='employee') detail=`${a.eid||''} ${a.job?'· '+a.job:''}`.trim()||'-';
+    if(a.type==='alumni') detail=`${a.alid||''} ${a.grad?'· '+a.grad:''}`.trim()||'-';
+    if(a.type==='guest') detail=a.gid||'-';
+    return `<tr>
+      <td style="font-weight:500">${a.fn} ${a.ln}</td>
+      <td>${badge(typeBadge[a.type]||'b-gray',a.type)}</td>
+      <td style="font-size:12px">${a.email}</td>
+      <td style="font-size:11px;color:var(--color-text-secondary)">${detail}</td>
+      <td style="font-size:12px">${a.gender.replace(/_/g,' ')}</td>
+      <td style="font-size:12px">${a.reg}</td>
+      <td class="actions">
+        <button class="btn btn-sm" onclick="openAttModal(${a.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="delAtt(${a.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('att-tbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--color-text-secondary)">No attendees found</td></tr>';
+}
+
+function renderTickets(){
+  const q=fv('tk-search').toLowerCase(),f=fv('tk-pay-filter');
+  const rows=DB.tickets.filter(t=>{
+    const a=getA(t.att_id);
+    const m=!q||(t.code+(a.fn+' '+a.ln)).toLowerCase().includes(q);
+    return m&&(!f||t.pay===f);
+  }).map(t=>{
+    const a=getA(t.att_id),c=getC(t.cat_id),e=getE(c.event_id);
+    return `<tr>
+      <td><code style="font-size:11px;word-break:break-all">${t.code}</code></td>
+      <td><div style="font-weight:500">${a.fn} ${a.ln}</div><div style="margin-top:2px">${badge(typeBadge[a.type]||'b-gray',a.type)}</div></td>
+      <td><div style="font-size:12px">${e.name||'-'}</div><div style="font-size:11px;color:var(--color-text-secondary)">${c.name||''}</div></td>
+      <td>${badge(payBadge[t.pay]||'b-gray',t.pay)}</td>
+      <td>${t.validated?`${badge('b-green','Yes')}<div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">${t.val_at}</div>`:badge('b-gray','No')}</td>
+      <td class="actions">
+        <button class="btn btn-sm" onclick="viewTicket(${t.id})">View QR</button>
+        ${!t.validated?`<button class="btn btn-sm btn-success" onclick="quickVal('${t.code}')">Validate</button>`:''}
+        <button class="btn btn-sm btn-danger" onclick="delTicket(${t.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ticket-tbody').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--color-text-secondary)">No tickets</td></tr>';
+}
+
+function renderValQuick(){
+  const list=DB.tickets.slice(0,8).map(t=>{
+    const a=getA(t.att_id);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div>
+        <span style="font-size:13px;font-weight:500">${a.fn} ${a.ln}</span>
+        <br><code style="font-size:11px;color:var(--color-text-secondary)">${t.code}</code>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${t.validated?badge('b-green','Validated'):badge('b-gray','Pending')}
+        <button class="btn btn-sm" onclick="prefillVal('${t.code}')">Test</button>
       </div>
     </div>`;
   }).join('');
+  document.getElementById('val-quick-list').innerHTML=list;
 }
-function renderStudentList(){
-  document.getElementById('studentListBody').innerHTML=students.map((s,i)=>{
-    const d=gradeData[s.id];const f=d?computeFinal(d):null;const col=color(i);const ini=initials(s.name);
-    return`<tr>
-      <td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;background:${col};color:#E8C04A;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name}</div></td>
-      <td style="color:var(--gray-400)">${s.id}</td>
-      <td><span class="badge badge-grade">${f?f.final:'—'}</span></td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openStudentProfile(${i})">View</button><button class="btn btn-outline btn-sm" onclick="openEditStudent(${i})">Edit</button></div></td>
-    </tr>`;
-  }).join('');
+
+function prefillVal(code){
+  gv('val-input',code);
+  ['val-ok','val-fail','val-warn'].forEach(id=>document.getElementById(id).style.display='none');
 }
-function openStudentProfile(idx){
-  const s=students[idx];currentStudentIdx=idx;
-  const d=gradeData[s.id];const f=d?computeFinal(d):{cp:'—',exam:'—',final:'—'};
-  document.getElementById('spBreadcrumb').textContent=s.name;
-  document.getElementById('spAvatar').textContent=initials(s.name);
-  document.getElementById('spAvatar').style.background=color(idx);
-  document.getElementById('spName').textContent=s.name;
-  document.getElementById('spId').textContent=s.id;
-  document.getElementById('spFinalGrade').textContent=f.final;
-  document.getElementById('spClassPerf').textContent=f.cp;
-  document.getElementById('spExamScore').textContent=f.exam;
-  if(d){
-    const qA=avg(d.qe||[]).toFixed(1),raA=avg(d.ra||[]).toFixed(1),pA=avg(d.p||[]).toFixed(1);
-    const cp=f.cp;
-    document.getElementById('spTableBody').innerHTML=`
-      <tr><td>Attendance</td><td>${d.att}/20</td><td>—</td><td>—</td></tr>
-      <tr><td>Class Participation</td><td>${d.part}</td><td>10%</td><td>${(d.part*0.1).toFixed(1)}</td></tr>
-      <tr><td>Quizzes / Exercises</td><td>${qA} avg</td><td>25%</td><td>${(qA*0.25).toFixed(1)}</td></tr>
-      <tr><td>Recitation / Activities</td><td>${raA} avg</td><td>25%</td><td>${(raA*0.25).toFixed(1)}</td></tr>
-      <tr><td>Projects</td><td>${pA} avg</td><td>40%</td><td>${(pA*0.4).toFixed(1)}</td></tr>
-      <tr style="background:var(--gold-pale)"><td><strong>Class Performance</strong></td><td colspan="2"><strong>× 70%</strong></td><td><strong>${cp}</strong></td></tr>
-      <tr><td>Major Examination</td><td>${d.exam}</td><td>30%</td><td>${(d.exam*0.3).toFixed(1)}</td></tr>
-      <tr style="background:var(--maroon-pale)"><td><strong style="color:var(--maroon)">FINAL GRADE</strong></td><td colspan="2"><strong style="color:var(--maroon)">Total</strong></td><td><strong style="color:var(--maroon)">${f.final}</strong></td></tr>`;
+
+function clearValidate(){
+  gv('val-input','');
+  ['val-ok','val-fail','val-warn'].forEach(id=>document.getElementById(id).style.display='none');
+}
+
+function doValidate(){
+  const code=fv('val-input').trim();
+  ['val-ok','val-fail','val-warn'].forEach(id=>document.getElementById(id).style.display='none');
+  if(!code){
+    document.getElementById('val-fail').style.display='block';
+    document.getElementById('val-fail-body').textContent='Please enter a ticket code.';
+    return;
   }
-  navTo('student',null);
-}
-function openEditStudent(idx){
-  currentStudentIdx=idx;const s=students[idx];
-  document.getElementById('editStudentName').value=s.name;
-  document.getElementById('editStudentId').value=s.id;
-  openModal('editStudentModal');
-}
-function saveEditStudent(){
-  if(currentStudentIdx>=0){students[currentStudentIdx].name=document.getElementById('editStudentName').value;renderStudents();}
-  closeModal('editStudentModal');
-}
-function removeStudent(){if(currentStudentIdx>=0){students.splice(currentStudentIdx,1);initGradeData();renderStudents();renderGradeTable();}closeModal('editStudentModal');}
-function addStudent(){
-  const name=document.getElementById('newStudentName').value.trim();
-  const id=document.getElementById('newStudentId').value.trim()||`STU-2024-0${students.length+10}`;
-  if(!name)return;
-  students.push({name,id});initGradeData();renderStudents();renderGradeTable();
-  document.getElementById('newStudentName').value='';document.getElementById('newStudentId').value='';
-  closeModal('addStudentModal');
+  const t=DB.tickets.find(x=>x.code===code);
+  if(!t){
+    document.getElementById('val-fail').style.display='block';
+    document.getElementById('val-fail-body').textContent='Ticket not found. Please check the code and try again.';
+    return;
+  }
+  if(t.validated){
+    document.getElementById('val-warn').style.display='block';
+    document.getElementById('val-warn-body').innerHTML=`This ticket was already validated on <strong>${t.val_at}</strong>. Entry denied.`;
+    return;
+  }
+  const a=getA(t.att_id),c=getC(t.cat_id),e=getE(c.event_id),v=getV(e.venue_id);
+  t.validated=1;t.val_at=now();
+  document.getElementById('val-ok').style.display='block';
+  document.getElementById('val-ok-body').innerHTML=`
+    <table style="font-size:13px;width:100%;margin-top:4px">
+      <tr><td style="color:var(--color-text-success);padding:2px 0;width:100px">Attendee</td><td><strong>${a.fn} ${a.ln}</strong></td></tr>
+      <tr><td style="color:var(--color-text-success);padding:2px 0">Type</td><td>${badge(typeBadge[a.type]||'b-gray',a.type)}</td></tr>
+      <tr><td style="color:var(--color-text-success);padding:2px 0">Event</td><td>${e.name}</td></tr>
+      <tr><td style="color:var(--color-text-success);padding:2px 0">Category</td><td>${c.name}</td></tr>
+      <tr><td style="color:var(--color-text-success);padding:2px 0">Venue</td><td>${v.name||'-'}</td></tr>
+      <tr><td style="color:var(--color-text-success);padding:2px 0">Validated at</td><td>${t.val_at}</td></tr>
+    </table>`;
+  renderTickets();renderValQuick();
 }
 
-function addQuizColumn(){const n=prompt('Quiz name (e.g. QE5):');if(n&&!quizCols.includes(n)){quizCols.push(n);students.forEach(s=>{if(gradeData[s.id])gradeData[s.id].qe.push(rand(72,98));});renderGradeTable();}}
-function addActivityColumn(){const n=prompt('Activity name (e.g. RA4):');if(n&&!actCols.includes(n)){actCols.push(n);students.forEach(s=>{if(gradeData[s.id])gradeData[s.id].ra.push(rand(74,98));});renderGradeTable();}}
+function quickVal(code){
+  goPage('validate',document.getElementById('nav-validate'));
+  gv('val-input',code);
+  doValidate();
+}
 
-function renderGradeTable(){
-  const head=document.getElementById('gradeHead');
-  const body=document.getElementById('gradeTableBody');
-  head.innerHTML=`<tr>
-    <th style="min-width:130px">Student</th>
-    <th class="grade-cell-fixed">Att.</th>
-    <th class="grade-cell-fixed">Part (10%)</th>
-    ${quizCols.map(q=>`<th class="grade-cell-fixed" style="min-width:65px">${q}</th>`).join('')}
-    ${actCols.map(r=>`<th class="grade-cell-fixed" style="min-width:65px">${r}</th>`).join('')}
-    ${projCols.map(p=>`<th class="grade-cell-fixed" style="min-width:65px">${p}</th>`).join('')}
-    <th class="grade-cell-computed" style="min-width:80px">Class Perf (70%)</th>
-    <th class="grade-cell-fixed" style="min-width:75px">Major Exam</th>
-    <th class="grade-cell-computed" style="min-width:80px">Exam (30%)</th>
-    <th style="background:var(--maroon);color:var(--white);font-size:12px;text-align:center;min-width:90px">Final Grade</th>
-  </tr>`;
-  body.innerHTML=students.map((s,si)=>{
-    const d=gradeData[s.id];if(!d)return'';
-    const f=computeFinal(d);const col=color(si);const ini=initials(s.name);
-    return`<tr>
-      <td><div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:22px;border-radius:50%;background:${col};color:#E8C04A;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name.split(' ')[0]}</div></td>
-      <td style="text-align:center">${d.att}/20</td>
-      <td><input type="number" min="0" max="100" value="${d.part}" style="width:60px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].part=+this.value;recompute('${s.id}')"/></td>
-      ${d.qe.map((q,i)=>`<td><input type="number" min="0" max="100" value="${q}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].qe[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
-      ${d.ra.map((r,i)=>`<td><input type="number" min="0" max="100" value="${r}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].ra[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
-      ${d.p.map((p,i)=>`<td><input type="number" min="0" max="100" value="${p}" style="width:58px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].p[${i}]=+this.value;recompute('${s.id}')"/></td>`).join('')}
-      <td class="grade-cell-computed" id="cp-${s.id}">${f.cp}</td>
-      <td><input type="number" min="0" max="100" value="${d.exam}" style="width:62px;text-align:center;padding:4px;border:1.5px solid #FFCCCC;border-radius:6px;background:#FFF0F0;font-size:12px" onchange="gradeData['${s.id}'].exam=+this.value;recompute('${s.id}')"/></td>
-      <td class="grade-cell-computed" id="eg-${s.id}">${(d.exam*0.3).toFixed(1)}</td>
-      <td style="text-align:center"><span style="background:var(--maroon);color:var(--white);font-weight:800;font-size:13px;padding:4px 10px;border-radius:6px;display:inline-block" id="fg-${s.id}">${f.final}</span></td>
-    </tr>`;
-  }).join('');
+let editEvId=null;
+function openEventModal(id=null){
+  editEvId=id;
+  document.getElementById('ev-modal-title').textContent=id?'Edit Event':'New Event';
+  document.getElementById('evm-venue').innerHTML=DB.venues.map(v=>`<option value="${v.id}">${v.name}</option>`).join('');
+  document.getElementById('evm-org').innerHTML=DB.orgs.map(o=>`<option value="${o.id}">${o.name}</option>`).join('');
+  if(id){
+    const e=getE(id);
+    gv('evm-name',e.name);gv('evm-type',e.type);gv('evm-date',e.date);gv('evm-start',e.start);gv('evm-end',e.end);
+    gv('evm-audience',e.audience);gv('evm-status',e.status);gv('evm-requires',e.ticket);gv('evm-venue',e.venue_id);gv('evm-org',e.org_id);gv('evm-desc',e.desc||'');
+  } else {
+    ['evm-name','evm-date','evm-start','evm-end','evm-desc'].forEach(x=>gv(x,''));
+    gv('evm-type','');gv('evm-audience','open_to_all');gv('evm-status','upcoming');gv('evm-requires','1');
+  }
+  openModal('ev-modal');
 }
-function recompute(sid){
-  const d=gradeData[sid];if(!d)return;
-  const f=computeFinal(d);
-  const cp=document.getElementById('cp-'+sid);const eg=document.getElementById('eg-'+sid);const fg=document.getElementById('fg-'+sid);
-  if(cp)cp.textContent=f.cp;if(eg)eg.textContent=(d.exam*0.3).toFixed(1);if(fg)fg.textContent=f.final;
-}
-function computeAllGrades(){students.forEach(s=>recompute(s.id));}
 
-function renderAttendance(){
-  document.getElementById('attendanceHead').innerHTML=`<tr><th>Student</th>${attDates.map(d=>`<th style="text-align:center;min-width:70px">${d}</th>`).join('')}<th style="text-align:center">Total</th></tr>`;
-  document.getElementById('attendanceBody').innerHTML=students.map((s,si)=>{
-    const col=color(si);const ini=initials(s.name);
-    const pres=attData[s.id]?Object.values(attData[s.id]).filter(v=>v==='P').length:0;
-    return`<tr><td><div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:22px;border-radius:50%;background:${col};color:#E8C04A;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">${ini}</div>${s.name.split(' ')[0]}</div></td>
-    ${attDates.map(d=>{const v=attData[s.id]?attData[s.id][d]:'—';return`<td style="text-align:center;cursor:pointer" onclick="toggleAtt('${s.id}','${d}',this)"><span class="badge ${v==='P'?'badge-present':'badge-absent'}">${v}</span></td>`}).join('')}
-    <td style="text-align:center;font-weight:700">${pres}/${attDates.length}</td></tr>`;
-  }).join('');
+function saveEvent(){
+  const name=fv('evm-name').trim(),type=fv('evm-type'),date=fv('evm-date'),start=fv('evm-start'),end=fv('evm-end');
+  if(!name||!type||!date||!start||!end){alert('Please fill all required fields.');return;}
+  if(start>=end){alert('End time must be after start time.');return;}
+  const obj={name,type,date,start,end,desc:fv('evm-desc'),audience:fv('evm-audience'),ticket:parseInt(fv('evm-requires')),status:fv('evm-status'),venue_id:parseInt(fv('evm-venue')),org_id:parseInt(fv('evm-org'))};
+  if(editEvId){const idx=DB.events.findIndex(e=>e.id===editEvId);DB.events[idx]={...DB.events[idx],...obj};}
+  else{obj.id=DB.nxt.event++;DB.events.push(obj);}
+  closeModal('ev-modal');renderEvents();renderDash();
 }
-function toggleAtt(sid,date,td){
-  if(!attData[sid])attData[sid]={};
-  attData[sid][date]=attData[sid][date]==='P'?'A':'P';
-  const v=attData[sid][date];
-  td.innerHTML=`<span class="badge ${v==='P'?'badge-present':'badge-absent'}">${v}</span>`;
-  renderAttendance();
+
+function delEvent(id){
+  if(!confirm('Delete this event and its categories?')) return;
+  DB.events=DB.events.filter(e=>e.id!==id);
+  DB.cats=DB.cats.filter(c=>c.event_id!==id);
+  renderEvents();renderDash();
 }
-function addAttendanceDate(){
-  const d=prompt('Enter date label (e.g. Jan 20):');
-  if(d&&!attDates.includes(d)){
-    attDates.push(d);
-    students.forEach(s=>{if(!attData[s.id])attData[s.id]={};attData[s.id][d]='P';});
-    renderAttendance();
+
+let editVnId=null;
+function openVenueModal(id=null){
+  editVnId=id;
+  document.getElementById('vn-modal-title').textContent=id?'Edit Venue':'Add Venue';
+  if(id){const v=getV(id);gv('vnm-name',v.name);gv('vnm-type',v.type);gv('vnm-cap',v.capacity);gv('vnm-bldg',v.building);gv('vnm-floor',v.floor);gv('vnm-av',v.av);}
+  else{['vnm-name','vnm-cap','vnm-bldg','vnm-floor'].forEach(x=>gv(x,''));gv('vnm-type','gymnasium');gv('vnm-av','1');}
+  openModal('vn-modal');
+}
+
+function saveVenue(){
+  const name=fv('vnm-name').trim(),cap=parseInt(fv('vnm-cap'));
+  if(!name||!cap||cap<1){alert('Name and valid capacity are required.');return;}
+  const obj={name,type:fv('vnm-type'),building:fv('vnm-bldg'),floor:fv('vnm-floor'),capacity:cap,av:parseInt(fv('vnm-av'))};
+  if(editVnId){const idx=DB.venues.findIndex(v=>v.id===editVnId);DB.venues[idx]={...DB.venues[idx],...obj};}
+  else{obj.id=DB.nxt.venue++;DB.venues.push(obj);}
+  closeModal('vn-modal');renderVenues();
+}
+
+function delVenue(id){
+  if(DB.events.some(e=>e.venue_id===id)){alert('Cannot delete — this venue has events assigned.');return;}
+  if(!confirm('Delete venue?')) return;
+  DB.venues=DB.venues.filter(v=>v.id!==id);renderVenues();
+}
+
+let editOrgId=null;
+function openOrgModal(id=null){
+  editOrgId=id;
+  document.getElementById('org-modal-title').textContent=id?'Edit Organization':'Add Organization';
+  if(id){const o=getO(id);gv('orgm-name',o.name);gv('orgm-type',o.type);gv('orgm-acc',o.acc);gv('orgm-af',o.af);gv('orgm-al',o.al);gv('orgm-email',o.email);gv('orgm-phone',o.phone);}
+  else{['orgm-name','orgm-af','orgm-al','orgm-email','orgm-phone'].forEach(x=>gv(x,''));gv('orgm-type','student_org');gv('orgm-acc','1');}
+  openModal('org-modal');
+}
+
+function saveOrg(){
+  const name=fv('orgm-name').trim(),email=fv('orgm-email').trim();
+  if(!name||!email){alert('Name and email are required.');return;}
+  if(!editOrgId&&DB.orgs.some(o=>o.email===email)){alert('An organization with this email already exists.');return;}
+  const obj={name,type:fv('orgm-type'),acc:parseInt(fv('orgm-acc')),af:fv('orgm-af'),al:fv('orgm-al'),email,phone:fv('orgm-phone')};
+  if(editOrgId){const idx=DB.orgs.findIndex(o=>o.id===editOrgId);DB.orgs[idx]={...DB.orgs[idx],...obj};}
+  else{obj.id=DB.nxt.org++;DB.orgs.push(obj);}
+  closeModal('org-modal');renderOrgs();
+}
+
+function delOrg(id){
+  if(DB.events.some(e=>e.org_id===id)){alert('Cannot delete — this organization has events.');return;}
+  if(!confirm('Delete organization?')) return;
+  DB.orgs=DB.orgs.filter(o=>o.id!==id);renderOrgs();
+}
+
+let editCatId=null;
+function openCatModal(id=null){
+  editCatId=id;
+  document.getElementById('cat-modal-title').textContent=id?'Edit Category':'Add Ticket Category';
+  document.getElementById('catm-event').innerHTML=DB.events.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  document.getElementById('catm-err').style.display='none';
+  if(id){const c=getC(id);gv('catm-event',c.event_id);gv('catm-name',c.name);gv('catm-elig',c.elig);gv('catm-price',c.price);gv('catm-slots',c.total);}
+  else{['catm-name','catm-price','catm-slots'].forEach(x=>gv(x,''));gv('catm-elig','all');}
+  openModal('cat-modal');
+}
+
+function saveCat(){
+  const name=fv('catm-name').trim(),price=parseFloat(fv('catm-price')),slots=parseInt(fv('catm-slots'));
+  const errEl=document.getElementById('catm-err');errEl.style.display='none';
+  if(!name||isNaN(price)||price<0||!slots||slots<1){errEl.textContent='Fill all fields with valid values.';errEl.style.display='block';return;}
+  const obj={event_id:parseInt(fv('catm-event')),name,elig:fv('catm-elig'),price,total:slots};
+  if(editCatId){
+    const idx=DB.cats.findIndex(c=>c.id===editCatId);
+    const diff=slots-DB.cats[idx].total;
+    DB.cats[idx]={...DB.cats[idx],...obj,remaining:Math.max(0,DB.cats[idx].remaining+diff)};
+  } else {
+    obj.id=DB.nxt.cat++;obj.remaining=slots;DB.cats.push(obj);
+  }
+  closeModal('cat-modal');renderCategories();
+}
+
+function delCat(id){
+  if(DB.tickets.some(t=>t.cat_id===id)){alert('Cannot delete — this category has tickets issued.');return;}
+  if(!confirm('Delete category?')) return;
+  DB.cats=DB.cats.filter(c=>c.id!==id);renderCategories();
+}
+
+let editAttId=null;
+function toggleSubtype(){
+  const t=fv('attm-type');
+  ['student','employee','alumni','guest'].forEach(s=>{
+    document.getElementById('sub-'+s).style.display=s===t?'grid':'none';
+  });
+  document.getElementById('sub-guest').style.display=t==='guest'?'block':'none';
+}
+
+function openAttModal(id=null){
+  editAttId=id;
+  document.getElementById('att-modal-title').textContent=id?'Edit Attendee':'Register Attendee';
+  document.getElementById('attm-err').style.display='none';
+  if(id){
+    const a=getA(id);
+    gv('attm-fn',a.fn);gv('attm-ln',a.ln);gv('attm-email',a.email);gv('attm-phone',a.phone);
+    gv('attm-gender',a.gender);gv('attm-bdate',a.bdate);gv('attm-type',a.type);
+    gv('attm-sid',a.sid);gv('attm-prog',a.prog);gv('attm-yr',a.yr);gv('attm-dept',a.dept);
+    gv('attm-eid',a.eid);gv('attm-job',a.job);
+    gv('attm-alid',a.alid);gv('attm-grad',a.grad);
+    gv('attm-gid',a.gid);
+  } else {
+    ['attm-fn','attm-ln','attm-email','attm-phone','attm-bdate','attm-sid','attm-prog','attm-yr','attm-dept','attm-eid','attm-job','attm-alid','attm-grad','attm-gid'].forEach(x=>gv(x,''));
+    gv('attm-type','student');gv('attm-gender','male');
+  }
+  toggleSubtype();
+  openModal('att-modal');
+}
+
+function saveAtt(){
+  const fn=fv('attm-fn').trim(),ln=fv('attm-ln').trim(),em=fv('attm-email').trim(),bd=fv('attm-bdate');
+  const errEl=document.getElementById('attm-err');errEl.style.display='none';
+  if(!fn||!ln||!em||!bd){errEl.textContent='First name, last name, email, and birth date are required.';errEl.style.display='block';return;}
+  if(!editAttId&&DB.attendees.some(a=>a.email===em)){errEl.textContent='An attendee with this email already exists.';errEl.style.display='block';return;}
+  const t=fv('attm-type');
+  const obj={fn,ln,email:em,phone:fv('attm-phone')||null,gender:fv('attm-gender'),bdate:bd,type:t,reg:now().substring(0,10),
+    sid:fv('attm-sid')||null,prog:fv('attm-prog')||null,yr:fv('attm-yr')?parseInt(fv('attm-yr')):null,dept:fv('attm-dept')||null,
+    eid:fv('attm-eid')||null,job:fv('attm-job')||null,
+    alid:fv('attm-alid')||null,grad:fv('attm-grad')?parseInt(fv('attm-grad')):null,
+    gid:fv('attm-gid')||null};
+  if(editAttId){const idx=DB.attendees.findIndex(a=>a.id===editAttId);DB.attendees[idx]={...DB.attendees[idx],...obj};}
+  else{obj.id=DB.nxt.att++;DB.attendees.push(obj);}
+  closeModal('att-modal');renderAttendees();renderDash();
+}
+
+function delAtt(id){
+  if(DB.tickets.some(t=>t.att_id===id)){alert('Cannot delete — this attendee has tickets.');return;}
+  if(!confirm('Delete attendee?')) return;
+  DB.attendees=DB.attendees.filter(a=>a.id!==id);renderAttendees();renderDash();
+}
+
+function openTicketModal(){
+  document.getElementById('tkm-event').innerHTML='<option value="">-- Select event --</option>'+DB.events.filter(e=>e.ticket&&e.status!=='cancelled').map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  document.getElementById('tkm-cat').innerHTML='<option value="">-- Select category --</option>';
+  document.getElementById('tkm-att').innerHTML='<option value="">-- Select attendee --</option>'+DB.attendees.map(a=>`<option value="${a.id}">${a.fn} ${a.ln} (${a.type})</option>`).join('');
+  document.getElementById('tkm-info').textContent='';
+  document.getElementById('tkm-err').style.display='none';
+  openModal('tk-modal');
+}
+
+function loadTkCats(){
+  const eid=parseInt(fv('tkm-event'));
+  const cats=DB.cats.filter(c=>c.event_id===eid&&c.remaining>0);
+  document.getElementById('tkm-cat').innerHTML='<option value="">-- Select category --</option>'+cats.map(c=>`<option value="${c.id}">${c.name} — ${c.price>0?'₱'+c.price:'Free'} (${c.remaining} left)</option>`).join('');
+  showTkInfo();
+}
+
+function showTkInfo(){
+  const catId=parseInt(fv('tkm-cat')),attId=parseInt(fv('tkm-att'));
+  if(!catId||!attId){document.getElementById('tkm-info').textContent='';return;}
+  const c=getC(catId),a=getA(attId);
+  if(c.elig!=='all'&&c.elig!==a.type){
+    document.getElementById('tkm-info').innerHTML=`<span style="color:var(--color-text-danger)">&#9888; Eligibility mismatch: category is for ${c.elig}s, but this attendee is a ${a.type}.</span>`;
+  } else {
+    document.getElementById('tkm-info').innerHTML=`<span style="color:var(--color-text-success)">&#10003; Eligible. Price: ${c.price>0?'₱'+c.price:'Free'}</span>`;
   }
 }
 
-function toggleProfileEdit(){
-  const editing=document.getElementById('profileEditForm').style.display!=='none';
-  if(editing){cancelProfileEdit();}else{
-    document.getElementById('profileView').style.display='none';
-    document.getElementById('profileEditForm').style.display='grid';
-    document.getElementById('profileSaveRow').style.display='block';
-    document.getElementById('profileEditBtn').textContent='Cancel';
-  }
-}
-function saveProfile(){
-  document.getElementById('vName').textContent=document.getElementById('eName').value;
-  document.getElementById('vEmail').textContent=document.getElementById('eEmail').value;
-  document.getElementById('vDept').textContent=document.getElementById('eDept').value;
-  cancelProfileEdit();
-}
-function cancelProfileEdit(){
-  document.getElementById('profileView').style.display='grid';
-  document.getElementById('profileEditForm').style.display='none';
-  document.getElementById('profileSaveRow').style.display='none';
-  document.getElementById('profileEditBtn').textContent='Edit Profile';
+function genTicket(){
+  const catId=parseInt(fv('tkm-cat')),attId=parseInt(fv('tkm-att'));
+  const errEl=document.getElementById('tkm-err');errEl.style.display='none';
+  if(!catId||!attId){errEl.textContent='Please select event, category, and attendee.';errEl.style.display='block';return;}
+  const c=getC(catId),a=getA(attId);
+  if(c.elig!=='all'&&c.elig!==a.type){errEl.textContent=`Eligibility error: category is for ${c.elig}s only.`;errEl.style.display='block';return;}
+  if(c.remaining<=0){errEl.textContent='No slots remaining for this category.';errEl.style.display='block';return;}
+  if(DB.tickets.some(t=>t.cat_id===catId&&t.att_id===attId)){errEl.textContent='This attendee already has a ticket for this category.';errEl.style.display='block';return;}
+  const code=uuid();
+  const tk={id:DB.nxt.ticket++,code,date:now(),validated:0,val_at:null,pay:c.price>0?'paid':'free',cat_id:catId,att_id:attId};
+  DB.tickets.push(tk);
+  const ci=DB.cats.findIndex(x=>x.id===catId);DB.cats[ci].remaining--;
+  closeModal('tk-modal');
+  renderTickets();renderDash();
+  viewTicket(tk.id);
 }
 
-function renderCurriculum(){
-  const subjects=['Mathematics — Grade 10','Science — Grade 10'];
-  document.getElementById('curriculumGrid').innerHTML=subjects.map(subj=>`
-    <div class="card">
-      <div class="card-title">${subj}</div>
-      ${currTopics.map((t,i)=>`
-        <div class="curriculum-item">
-          <div class="ci-num">${i+1}</div>
-          <div style="flex:1"><div style="font-size:13.5px;font-weight:500">${t.title}</div><div style="font-size:11px;color:var(--gray-400)">${t.week}</div></div>
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-outline btn-sm" style="font-size:11px;padding:3px 8px" onclick="editTopic(${i})">Edit</button>
-            <button class="btn btn-danger btn-sm" style="font-size:11px;padding:3px 8px" onclick="removeTopic(${i})">✕</button>
+function viewTicket(id){
+  viewingTicketId=id;
+  const t=DB.tickets.find(x=>x.id===id);if(!t) return;
+  const a=getA(t.att_id),c=getC(t.cat_id),e=getE(c.event_id),v=getV(e.venue_id),o=getO(e.org_id);
+  const content=document.getElementById('tv-content');
+  content.innerHTML=`
+    <div class="ticket-print" id="printable-ticket">
+      <div class="ticket-hd">
+        <div style="font-size:15px;font-weight:500">${e.name||'—'}</div>
+        <div style="font-size:12px;opacity:0.85;margin-top:3px">${e.date} &nbsp;·&nbsp; ${e.start} — ${e.end}</div>
+        <div style="font-size:12px;opacity:0.8">${v.name||''}</div>
+      </div>
+      <div class="ticket-body">
+        <div>
+          <div class="ticket-field"><p>Attendee</p><p>${a.fn} ${a.ln}</p></div>
+          <div class="ticket-field"><p>Type</p><p>${a.type}</p></div>
+          <div class="ticket-field"><p>Category</p><p>${c.name}</p></div>
+          <div class="ticket-field"><p>Payment</p><p>${t.pay}</p></div>
+          <div class="ticket-field"><p>Issued</p><p style="font-size:12px">${t.date}</p></div>
+          <div class="ticket-field"><p>Status</p><p>${t.validated?'<span style="color:#3B6D11;font-weight:500">Validated</span>':'<span style="color:#888780">Not yet validated</span>'}</p></div>
+          <div style="margin-top:8px;padding:6px 8px;background:var(--color-background-secondary);border-radius:6px">
+            <p style="font-size:10px;color:var(--color-text-secondary);margin-bottom:2px">Ticket code</p>
+            <code style="font-size:10px;word-break:break-all">${t.code}</code>
           </div>
-        </div>`).join('')}
-    </div>`).join('');
-}
-function addTopic(){const t=document.getElementById('newTopicTitle').value.trim();if(!t)return;currTopics.push({title:t,week:'Upcoming'});renderCurriculum();closeModal('addTopicModal');document.getElementById('newTopicTitle').value='';}
-function editTopic(i){const t=prompt('Edit topic:',currTopics[i].title);if(t){currTopics[i].title=t;renderCurriculum();}}
-function removeTopic(i){if(confirm('Remove this topic?')){currTopics.splice(i,1);renderCurriculum();}}
-
-function openModal(id){document.getElementById(id).style.display='flex';}
-function closeModal(id){document.getElementById(id).style.display='none';}
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.style.display='none';}));
-
-function switchLoginTab(tab){
-  document.querySelectorAll('.login-tab').forEach((t,i)=>{t.classList.toggle('active',i===(tab==='login'?0:1));});
-  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
-  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
-}
-function doLogin(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('mainApp').style.display='flex';
-  initGradeData();renderStudents();
-}
-function doLogout(){
-  document.getElementById('mainApp').style.display='none';
-  document.getElementById('loginScreen').style.display='flex';
+        </div>
+        <div id="qr-box-${id}" style="flex-shrink:0"></div>
+      </div>
+      <div style="border-top:0.5px dashed var(--color-border-tertiary);margin-top:12px;padding-top:10px;font-size:11px;color:var(--color-text-secondary);text-align:center">
+        ${o.name||''} &nbsp;·&nbsp; Issued by EventTicket University System
+      </div>
+    </div>`;
+  openModal('tv-modal');
+  setTimeout(()=>{
+    const box=document.getElementById('qr-box-'+id);
+    if(box&&typeof QRCode!=='undefined'){
+      new QRCode(box,{text:t.code,width:120,height:120,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+    }
+  },120);
 }
 
-initGradeData();
-renderCurriculum();
+function printTicket(){
+  const el=document.getElementById('printable-ticket');
+  if(!el) return;
+  const w=window.open('','_blank','width=500,height=600');
+  w.document.write(`<html><head><title>Ticket</title><style>body{font-family:sans-serif;padding:20px;color:#111}code{font-size:10px;word-break:break-all}.ticket-field p:first-child{font-size:11px;color:#666;margin:0}.ticket-field p:last-child{font-size:13px;font-weight:500;margin:2px 0 8px}</style></head><body>${el.innerHTML}</body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),300);
+}
+
+function delTicket(id){
+  if(!confirm('Delete this ticket?')) return;
+  const t=DB.tickets.find(x=>x.id===id);
+  if(t){const ci=DB.cats.findIndex(c=>c.id===t.cat_id);if(ci>=0)DB.cats[ci].remaining++;}
+  DB.tickets=DB.tickets.filter(x=>x.id!==id);
+  renderTickets();renderDash();
+}
 </script>
-</body>
 </html>
